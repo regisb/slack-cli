@@ -31,32 +31,32 @@ Usage
 Send message to channel, group or user
 --------------------------------------
 
-Post to channel from stdin::
+Post to ``@general`` from stdin::
 
-    date | slack-send -c slack_channel -t slack_token
+    date | slack-pipe -t slack_token general
 
 In the following examples we assume the ``SLACK_TOKEN`` environment variable is
 properly defined.
 
 Post to channel::
 
-    slack-send -c slack_channel -m "Hello world"
+    slack-send "Hello world" general
 
 Send message to user::
 
-    date | slack-send -u user_name
+    date | slack-pipe username
 
-Upload file to channel::
+Upload file to channel ``@random``::
 
-    slack-send -c slack_channel -f image.png
-
-Upload file to group::
-
-    slack-send -g slack_group -f image.png
+    slack-upload lolcat.png random
 
 Send non-formatted message to channel::
 
-    cat main.py | slack-send -c general --pre
+    cat main.py | slack-pipe general
+
+Send the result of a command to John::
+
+    slack-run "git status" john 
 
 Stream content in real time
 ---------------------------

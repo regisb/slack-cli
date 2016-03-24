@@ -20,7 +20,7 @@ def get_requirements():
 
 setup(
     name="slack-cli",
-    version="1.0.0",
+    version="0.2.0",
     description="Interact with Slack from the command line",
     long_description=(read('README.rst')),
     url="https://github.com/regisb/slack-cli",
@@ -34,8 +34,11 @@ setup(
     packages=['slack_cli'],
     entry_points={
         'console_scripts': [
+            'slack-pipe=slack_cli.pipe:main',
+            'slack-run=slack_cli.run:main',
             'slack-send=slack_cli.send:main',
             'slack-stream=slack_cli.stream:main',
+            'slack-upload=slack_cli.upload:main',
         ],
     },
     classifiers=[
