@@ -20,7 +20,7 @@ def get_requirements():
 
 setup(
     name="slack-cli",
-    version="0.0.2",
+    version="1.0.0",
     description="Interact with Slack from the command line",
     long_description=(read('README.rst')),
     url="https://github.com/regisb/slack-cli",
