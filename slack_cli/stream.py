@@ -9,14 +9,13 @@ def main():
     parser = utils.get_parser("Stream Slack messages in real time")
     parser.add_argument('sources', nargs='*',
                         help="Channel, group or user name from which to tail messages. E.g: 'general random john'")
-    args = parser.parse_args()
+    args, token = utils.parse_args(parser)
     try:
-        loop(args)
+        loop(args, token)
     except KeyboardInterrupt:
         pass
 
-def loop(args):
-    token = utils.get_token(args.token)
+def loop(args, token):
     source_ids = utils.get_source_ids(token, args.sources)
     connection = get_rtm_websocket(token)
     current_source_id = None

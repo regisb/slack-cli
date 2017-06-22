@@ -12,8 +12,7 @@ def main():
     parser.add_argument("--pre", action="store_true", help="Post as verbatim `message`")
     parser.add_argument("message", help="Message to send.")
     parser.add_argument("destination", help="Slack channel, group or username")
-    args = parser.parse_args()
+    args, token = utils.parse_args(parser)
 
-    token = utils.get_token(args.token)
     destination_id = utils.get_source_id(token, args.destination)
     utils.ChatAsUser(token).post_formatted_message(destination_id, args.message, pre=args.pre)

@@ -13,9 +13,8 @@ def main():
     parser = utils.get_parser("Send the result of a command to Slack")
     parser.add_argument("command", help="Command to run")
     parser.add_argument("destination", help="Slack channel, group or username")
-    args = parser.parse_args()
+    args, token = utils.parse_args(parser)
 
-    token = utils.get_token(args.token)
     destination_id = utils.get_source_id(token, args.destination)
 
     command_result = subprocess.check_output(args.command, shell=True)

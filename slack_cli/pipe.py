@@ -12,9 +12,8 @@ from . import utils
 def main():
     parser = utils.get_parser("Send input from stdin to Slack")
     parser.add_argument("destination", help="Slack channel, group or username")
-    args = parser.parse_args()
+    args, token = utils.parse_args(parser)
 
-    token = utils.get_token(args.token)
     destination_id = utils.get_source_id(token, args.destination)
 
     message = "".join([line for line in sys.stdin])

@@ -1,21 +1,65 @@
 import argparse
 import os
+import stat
+import sys
 
+import appdirs
 import slacker
+
+
+SLACK_TOKEN_PATH = os.path.join(appdirs.user_config_dir("slack-cli"), "slack_token")
 
 
 def get_parser(description):
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument("-t", "--token",
-                        help=("Slack token. This argument is unnecessary if you"
-                        "have defined the SLACK_TOKEN variable."))
+                        help=("Slack token which will be saved to {}. This argument only needs to be" +
+                              " specified once.").format(SLACK_TOKEN_PATH))
     return parser
 
-def get_token(token=None):
+def parse_args(parser):
+    """
+    Parse cli arguments; eventually save the token to disk.
+    """
+    args = parser.parse_args()
+    try:
+        token = _get_token(args.token)
+    except UndefinedSlackToken:
+        sys.stderr.write(
+"""Empty slack token value. You must define a valid Slack token to interact
+with the Slack API. You may do do either by defining the SLACK_TOKEN
+environment variable or by writing the token to {}.\n""".format(SLACK_TOKEN_PATH))
+        sys.exit(1)
+
+    # Save token
+    if not os.path.exists(SLACK_TOKEN_PATH):
+        token_directory = os.path.dirname(SLACK_TOKEN_PATH)
+        if not os.path.exists(token_directory):
+            os.makedirs(token_directory)
+        with open(SLACK_TOKEN_PATH, "w") as slack_token_file:
+            slack_token_file.write(token)
+        os.chmod(SLACK_TOKEN_PATH, stat.S_IREAD | stat.S_IWRITE)
+
+    return args, token
+
+def _get_token(token):
     token = token or os.environ.get('SLACK_TOKEN')
     if not token:
-        raise ValueError("Empty slack token value.")
+        token = os.environ.get('SLACK_TOKEN')
+    if not token:
+        try:
+            with open(SLACK_TOKEN_PATH) as slack_token_file:
+                token = slack_token_file.read().strip()
+        except IOError:
+            pass
+    if not token:
+        raise UndefinedSlackToken
     return token
+
+
+class UndefinedSlackToken(Exception):
+    pass
+
 
 def is_destination_valid(channel=None, group=None, user=None):
     """

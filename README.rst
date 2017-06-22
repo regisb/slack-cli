@@ -17,13 +17,14 @@ Install
 Note that ``slack-cli`` is compatible with Python 2.7+ and Python 3.4+.
 
 You should obtain an API token from Slack. This token can passed as an option
-to the CLI (see below) or stored in an environment variable.
+to the CLI (see below).
 
-You may set ``SLACK_TOKEN`` in your ``~/.bashrc``::
+Alternatively, the token can be defined in an environment variable (although it
+is not recommended [for security reasons](https://unix.stackexchange.com/questions/369566/why-is-passing-the-secrets-via-environmental-variables-considered-extremely-ins)):
 
-    # ~/.bashrc
     export SLACK_TOKEN="slack_token_string"
 
+After the first use, the token will be stored in a local configuration file.
 
 Usage
 =====
@@ -35,8 +36,8 @@ Post to ``@general`` from stdin::
 
     date | slack-pipe -t slack_token general
 
-In the following examples we assume the ``SLACK_TOKEN`` environment variable is
-properly defined.
+After this first command, the token will be saved to a local configuration
+file. (see `slack-pipe -h` for more info)
 
 Post to channel::
 
@@ -61,7 +62,6 @@ Send the result of a command to John::
 Stream content in real time
 ---------------------------
 
-The ``slack-stream`` command was written to emulate the behaviour of ``tail
--f``::
+The ``slack-stream`` command was written to emulate the behaviour of ``tail -f``::
 
     slack-stream general username groupname
