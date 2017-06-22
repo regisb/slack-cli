@@ -14,7 +14,13 @@ def get_parser(description):
 def get_token(token=None):
     token = token or os.environ.get('SLACK_TOKEN')
     if not token:
-        raise ValueError("Empty slack token value.")
+        token_file = '{}/.slack_token'.format(os.environ.get('HOME'))
+        if os.path.exists(token_file):
+            f = open(token_file)
+            token = f.readline().rstrip()
+            f.close()
+        if not token:
+            raise ValueError("Empty slack token value.")
     return token
 
 def is_destination_valid(channel=None, group=None, user=None):
