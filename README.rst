@@ -17,7 +17,7 @@ Install
 Note that ``slack-cli`` is compatible with Python 2.7+ and Python 3.4+.
 
 You should obtain an API token from Slack. This token can passed as an option
-to the CLI (see below).
+to the CLI (see below). To obtain a token, go to the [API token generator](https://api.slack.com/custom-integrations/legacy-tokens).
 
 Alternatively, the token can be defined in an environment variable (although it
 is not recommended [for security reasons](https://unix.stackexchange.com/questions/369566/why-is-passing-the-secrets-via-environmental-variables-considered-extremely-ins)):
@@ -32,12 +32,17 @@ Usage
 Send message to channel, group or user
 --------------------------------------
 
+Check that everything is working fine::
+
+    slack-send -t yourtoken "Hello!" slackbot
+
+Slackbot should answer something nice :) After this first command, the slack
+token will be saved to a local configuration file and you no longer have to
+pass the `-t` argument on the command line. (see `slack-pipe -h` for more info)
+
 Post to ``@general`` from stdin::
 
-    date | slack-pipe -t slack_token general
-
-After this first command, the token will be saved to a local configuration
-file. (see `slack-pipe -h` for more info)
+    date | slack-pipe general
 
 Post to channel::
 
