@@ -32,14 +32,14 @@ setup(
     license='MIT',
     author="Régis Behmo",
     author_email="nospam@behmo.com",
-    packages=['slack_cli'],
+    packages=['slackcli'],
     entry_points={
         'console_scripts': [
-            'slack-pipe=slack_cli.pipe:main',
-            'slack-run=slack_cli.run:main',
-            'slack-send=slack_cli.send:main',
-            'slack-stream=slack_cli.stream:main',
-            'slack-upload=slack_cli.upload:main',
+            'slack-pipe=slackcli.pipe:main',
+            'slack-run=slackcli.run:main',
+            'slack-send=slackcli.send:main',
+            'slack-stream=slackcli.stream:main',
+            'slack-upload=slackcli.upload:main',
         ],
     },
     classifiers=[
