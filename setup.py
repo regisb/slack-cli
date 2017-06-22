@@ -26,11 +26,7 @@ setup(
     packages=['slackcli'],
     entry_points={
         'console_scripts': [
-            'slack-pipe=slackcli.pipe:main',
-            'slack-run=slackcli.run:main',
-            'slack-send=slackcli.send:main',
-            'slack-stream=slackcli.stream:main',
-            'slack-upload=slackcli.upload:main',
+            'slack-cli=slackcli.slack:main',
         ],
     },
     classifiers=[
@@ -38,5 +34,6 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ]
 )

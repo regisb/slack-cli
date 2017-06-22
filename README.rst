@@ -2,7 +2,9 @@
 slack-cli
 =========
 
-Interact with `Slack <https://slack.com/>`_ from the command line.
+Interact with `Slack <https://slack.com/>`_ from the command line: send
+messages, upload files, send command output, pipe content, all from the confort
+of your terminal.
 
 This was initially a fork of https://github.com/juanpabloaj/slacker-cli/ but
 the two projects have now considerably diverged.
@@ -14,59 +16,115 @@ Install
 
     pip install slack-cli
 
-Note that ``slack-cli`` is compatible with Python 2.7+ and Python 3.4+.
 
-You should obtain an API token from Slack. This token can passed as an option
-to the CLI (see below). To obtain a token, go to the [API token generator](https://api.slack.com/custom-integrations/legacy-tokens).
-
-Alternatively, the token can be defined in an environment variable (although it
-is not recommended [for security reasons](https://unix.stackexchange.com/questions/369566/why-is-passing-the-secrets-via-environmental-variables-considered-extremely-ins)):
-
-    export SLACK_TOKEN="slack_token_string"
-
-After the first use, the token will be stored in a local configuration file.
+You should obtain an API token from Slack. To obtain a token, go to the
+`API token generator <https://api.slack.com/custom-integrations/legacy-tokens>`_.
 
 Usage
 =====
 
-Send message to channel, group or user
---------------------------------------
+::
 
-Check that everything is working fine::
+    $ slack-cli -h
+    usage: slack-cli [-h] [-t TOKEN] [-d DST] [-s SRC] [-f FILE] [--pre] [--run]
+                     [messages [messages ...]]
 
-    slack-send -t yourtoken "Hello!" slackbot
+    Send, pipe, upload and receive Slack messages from the CLI
 
-Slackbot should answer something nice :) After this first command, the slack
-token will be saved to a local configuration file and you no longer have to
-pass the `-t` argument on the command line. (see `slack-pipe -h` for more info)
+    positional arguments:
+      messages              Messages to send. Pass "-" to send content from stdin.
 
-Post to ``@general`` from stdin::
+    optional arguments:
+      -h, --help            show this help message and exit
+      -t TOKEN, --token TOKEN
+                            Slack token which will be saved to
+                            /home/username/.config/slack-cli/slack_token. This
+                            argument only needs to be specified once.
+      -d DST, --dst DST     Send message to a Slack channel, group or username
+      -s SRC, --src SRC     Receive messages from a Slack channel, group or
+                            username
+      -f FILE, --file FILE  Upload file
+      --pre                 Send as verbatim `message`
+      --run                 Run the message as a shell command and send both the
+                            message and the command output
 
-    date | slack-pipe general
+Note that the Slack token may optionally be stored in an environment variable (although it
+is not recommended `for security reasons <https://unix.stackexchange.com/questions/369566/why-is-passing-the-secrets-via-environmental-variables-considered-extremely-ins>`_)::
 
-Post to channel::
+    export SLACK_TOKEN="slack_token_string"
 
-    slack-send "Hello world" general
+Send message
+------------
 
-Send message to user::
+The destination argument may be any user, group or channel::
 
-    date | slack-pipe username
+    slack-cli -d general "Hello everyone!"
+    slack-cli -d slackbot "Hello!"
 
-Upload file to channel ``@random``::
 
-    slack-upload lolcat.png random
+Pipe content
+------------
 
-Send non-formatted message to channel::
+::
 
-    cat main.py | slack-pipe general
+    cat /etc/hosts | slack-cli -d devteam -
 
-Send the result of a command to John::
+Usually you will want to format piped content as verbatim content with triple
+backticks ("\`\`\`"). This is achieved with the `--pre` option::
 
-    slack-run "git status" john 
+    tail -f /var/log/nginx/access.log | slack-cli -d devteam --pre -
 
-Stream content in real time
+Upload file
+-----------
+
+::
+
+    slack-cli -f /etc/nginx/sites-available/default.conf -d alice
+
+Run command and send output
 ---------------------------
 
-The ``slack-stream`` command was written to emulate the behaviour of ``tail -f``::
+This is really convenient for showing both the result of a command and the
+command itself::
 
-    slack-stream general username groupname
+    slack-cli -d john --run "git log -1"
+
+will send to user `john`::
+
+    $ git log -1
+    commit 013798f5c85043d31f0221a9a32b39298e97fb08
+    Author: Régis Behmo <regis@behmo.com>
+    Date:   Thu Jun 22 15:20:36 2017 +0200
+
+        Replace all commands by a single command
+        
+        Our first 1.0 release!
+    
+
+Stream content from slack
+-------------------------
+
+For monitoring a Slack channel from the terminal::
+
+    slack-cli -s general
+
+Changelog
+=========
+
+v1.0 (2017-07-06):
+
+- Refactor command line by reducing all commands to a single "slack-cli" command.
+- Interactive API token input.
+- Automatic token creation check.
+    
+Development
+===========
+
+I am very much open to comments! Please don't be afraid to `raise issues
+<https://github.com/regisb/slack-cli/issues>`_ or `open pull requests
+<https://github.com/regisb/slack-cli/pulls>`_.
+
+TODO
+----
+
+- Support for multiple Slack teams

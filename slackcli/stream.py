@@ -5,18 +5,14 @@ import websocket
 from . import utils
 
 
-def main():
-    parser = utils.get_parser("Stream Slack messages in real time")
-    parser.add_argument('sources', nargs='*',
-                        help="Channel, group or user name from which to tail messages. E.g: 'general random john'")
-    args, token = utils.parse_args(parser)
+def receive(token, sources):
     try:
-        loop(args, token)
+        loop(token, sources)
     except KeyboardInterrupt:
         pass
 
-def loop(args, token):
-    source_ids = utils.get_source_ids(token, args.sources)
+def loop(token, sources):
+    source_ids = utils.get_source_ids(token, sources)
     connection = get_rtm_websocket(token)
     current_source_id = None
     while True:
@@ -27,7 +23,7 @@ def loop(args, token):
             source_id = data.get('channel') or data.get('group') or data.get('user')
             if source_id not in source_ids:
                 continue
-            if len(args.sources) != 1 and current_source_id != source_id:
+            if len(sources) != 1 and current_source_id != source_id:
                 if current_source_id is not None:
                     print("")
                 print("==> {} <==".format(source_ids[source_id]))

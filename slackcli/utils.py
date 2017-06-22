@@ -22,17 +22,18 @@ def parse_args(parser):
     Parse cli arguments; eventually save the token to disk.
     """
     args = parser.parse_args()
-    try:
-        token = _get_token(args.token)
-    except UndefinedSlackToken:
-        sys.stderr.write(
-"""Empty slack token value. You must define a valid Slack token to interact
-with the Slack API. You may do do either by defining the SLACK_TOKEN
-environment variable or by writing the token to {}.\n""".format(SLACK_TOKEN_PATH))
-        sys.exit(1)
+    token = _get_token(args.token)
 
     # Save token
     if not os.path.exists(SLACK_TOKEN_PATH):
+        # Check token
+        try:
+            get_source_id(token, "general")
+        except slacker.Error:
+            sys.stderr.write("Invalid Slack token: '{}'".format(token))
+            sys.exit(1)
+
+        # Write token file
         token_directory = os.path.dirname(SLACK_TOKEN_PATH)
         if not os.path.exists(token_directory):
             os.makedirs(token_directory)
@@ -43,22 +44,37 @@ environment variable or by writing the token to {}.\n""".format(SLACK_TOKEN_PATH
     return args, token
 
 def _get_token(token):
+    # Read from command line argument
     token = token or os.environ.get('SLACK_TOKEN')
+
+    # Read from environment variable
     if not token:
         token = os.environ.get('SLACK_TOKEN')
+
+    # Read from local config file
     if not token:
         try:
             with open(SLACK_TOKEN_PATH) as slack_token_file:
                 token = slack_token_file.read().strip()
         except IOError:
             pass
-    if not token:
-        raise UndefinedSlackToken
+
+    # Read from user input
+    while not token:
+        token = input(
+"""In order to interact with the Slack API, slack-cli requires a valid Slack API
+token. To create and view your tokens, head over to:
+
+    https://api.slack.com/custom-integrations/legacy-tokens
+
+This message will only be printed once. After the first run, the Slack API
+token will be stored in a local configuration file.
+Slack API token: """
+        )
+        if token:
+            token = token.strip()
+
     return token
-
-
-class UndefinedSlackToken(Exception):
-    pass
 
 
 def is_destination_valid(channel=None, group=None, user=None):
@@ -93,6 +109,8 @@ def get_sources(token, source_names):
     sources += filter_objects(slacker.Users(token).list().body['members'])
     return sources
 
+def upload_file(token, path, destination_id):
+    return slacker.Files(token).upload(path, channels=destination_id)
 
 class ChatAsUser(slacker.Chat):
 
