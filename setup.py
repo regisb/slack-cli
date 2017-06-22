@@ -9,18 +9,9 @@ def read(*paths):
     with open(os.path.join(*paths), 'r') as filename:
         return filename.read()
 
-def get_requirements():
-    path = os.path.join(os.path.dirname(__file__), 'requirements.txt')
-    requirements = [l.strip() for l in open(path)]
-    try:
-        import argparse# pylint: disable=unused-variable
-    except ImportError:
-        requirements.append('argparse')
-    return requirements
-
 setup(
     name="slack-cli",
-    version="0.2.1",
+    version="1.0.0",
     description="Interact with Slack from the command line",
     long_description=(read('README.rst')),
     url="https://github.com/regisb/slack-cli",
