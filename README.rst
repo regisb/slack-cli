@@ -111,6 +111,10 @@ For monitoring a Slack channel from the terminal::
 Changelog
 =========
 
+v1.0.2 (2017-08-31):
+
+- Fix token verification issue for users that don't have a "general" channel
+
 v1.0 (2017-07-06):
 
 - Refactor command line by reducing all commands to a single "slack-cli" command.

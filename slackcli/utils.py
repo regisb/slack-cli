@@ -28,7 +28,7 @@ def parse_args(parser):
     if not os.path.exists(SLACK_TOKEN_PATH):
         # Check token
         try:
-            get_source_id(token, "general")
+            slacker.API(token).test()
         except slacker.Error:
             sys.stderr.write("Invalid Slack token: '{}'".format(token))
             sys.exit(1)
