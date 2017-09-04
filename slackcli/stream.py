@@ -13,23 +13,19 @@ def receive(token, sources):
 
 def loop(token, sources):
     source_ids = utils.get_source_ids(token, sources)
+    print(source_ids)
     connection = get_rtm_websocket(token)
-    current_source_id = None
     while True:
         data = json.loads(connection.recv())
+        print(data)
         if data['type'] == 'hello':
             continue
         if data['type'] == 'message' and 'subtype' not in data:
             source_id = data.get('channel') or data.get('group') or data.get('user')
             if source_id not in source_ids:
+                # TODO we have a problem identifying the channel here
                 continue
-            if len(sources) != 1 and current_source_id != source_id:
-                if current_source_id is not None:
-                    print("")
-                print("==> {} <==".format(source_ids[source_id]))
-                current_source_id = source_id
-            username = slacker.Users(token).info(data['user']).body['user']['name']
-            print(u"{}: {}".format(username, data['text']))
+            print(utils.format_message(token, source_ids[source_id], data))
 
 def get_rtm_websocket(token):
     slacker_api = slacker.BaseAPI(token)

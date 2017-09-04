@@ -1,4 +1,6 @@
+from __future__ import unicode_literals
 import argparse
+from datetime import datetime
 import os
 import stat
 import sys
@@ -87,10 +89,10 @@ def is_destination_valid(channel=None, group=None, user=None):
         raise ValueError("You must define only one of channel, group or user argument.")
 
 def get_source_id(token, source_name):
-    destination = get_sources(token, [source_name])
-    if not destination:
+    sources = get_sources(token, [source_name])
+    if not sources:
         raise ValueError(u"Channel, group or user '{}' does not exist".format(source_name))
-    return destination[0]["id"]
+    return sources[0]["id"]
 
 def get_source_ids(token, source_names):
     return {
@@ -112,6 +114,32 @@ def get_sources(token, source_names):
 def upload_file(token, path, destination_id):
     return slacker.Files(token).upload(path, channels=destination_id)
 
+
+def search_messages(token, source_name, count=20):
+    search = slacker.Search(token)
+    messages = []
+    page = 1
+    while len(messages) < count:
+        response_body = search.messages("in:{}".format(source_name), page=page, count=1000).body
+        # Note that in the response, messages are sorted by *descending* date
+        # (most recent first)
+        messages = response_body["messages"]["matches"][::-1] + messages
+        paging = response_body["messages"]["paging"]
+        if paging["page"] == paging["pages"]:
+            break
+        page += 1
+
+    # Print the last count messages
+    for message in messages[-count:]:
+        print(format_message(token, source_name, message))
+
+def format_message(token, source_name, message):
+    time = datetime.fromtimestamp(float(message['ts']))
+    return "[{} {}]{}: {}".format(
+        source_name, time.strftime("%Y-%m-%d %H:%M:%S"),
+        username(token, message['user']), message['text']
+    )
+
 class ChatAsUser(slacker.Chat):
 
     def post_formatted_message(self, destination_id, text, pre=False):
@@ -119,3 +147,31 @@ class ChatAsUser(slacker.Chat):
             text = "```" + text + "```"
         text = text.strip()
         self.post_message(destination_id, text, as_user=True)
+
+
+
+class UserIndex:
+    """A user index for storing user names without making too many calls to the
+    API.
+    """
+
+    INSTANCE = None
+
+    def __init__(self, token):
+        self.slacker_users = slacker.Users(token)
+        self.user_index = {}
+
+    def name(self, user_id):
+        if user_id not in self.user_index:
+            self.user_index[user_id] = self.slacker_users.info(user_id).body['user']['name']
+        return self.user_index[user_id]
+
+
+def username(token, user_id):
+    """
+    Find the user name associated to a user ID.
+    """
+    if UserIndex.INSTANCE is None:
+        UserIndex.INSTANCE = UserIndex(token)
+
+    return UserIndex.INSTANCE.name(user_id)
