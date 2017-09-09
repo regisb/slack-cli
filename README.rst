@@ -51,7 +51,8 @@ Usage
       --pre                 Send as verbatim `message`
       --run                 Run the message as a shell command and send both the
                             message and the command output
-      messages              Messages to send. Pass "-" to send content from stdin.
+      messages              Messages to send (messages can also be sent from
+                            standard input)
 
     Receive messages:
       -s SRC, --src SRC     Receive messages from a Slack channel, group or
@@ -80,12 +81,12 @@ Pipe content
 
 ::
 
-    $ cat /etc/hosts | slack-cli -d devteam -
+    $ cat /etc/hosts | slack-cli -d devteam
 
 Usually you will want to format piped content as verbatim content with triple
 backticks ("\`\`\`"). This is achieved with the `--pre` option::
 
-    $ tail -f /var/log/nginx/access.log | slack-cli -d devteam --pre -
+    $ tail -f /var/log/nginx/access.log | slack-cli -d devteam --pre
 
 Upload file
 -----------
@@ -137,6 +138,7 @@ v2.0.0 (2017-09-09)
 - Add support for multiple teams
 - Fix streaming issues
 - Improve printed message format
+- Simplify sending messages from stdin
 
 v1.0.3 (2017-09-04):
 

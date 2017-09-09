@@ -12,14 +12,15 @@ def main():
 def run():
     parser = utils.get_parser("""Send, pipe, upload and receive Slack messages from the CLI""")
     group_send = parser.add_argument_group("Send messages")
-    group_send.add_argument("-d", "--dst", action='append', help="Send message to a Slack channel, group or username")
+    group_send.add_argument("-d", "--dst", help="Send message to a Slack channel, group or username")
     group_send.add_argument("-f", "--file", help="Upload file")
     group_send.add_argument("--pre", action="store_true", help="Send as verbatim `message`")
     group_send.add_argument(
         "--run", action="store_true",
         help="Run the message as a shell command and send both the message and the command output"
     )
-    group_send.add_argument("messages", nargs="*", help="Messages to send. Pass \"-\" to send content from stdin.")
+    group_send.add_argument("messages", nargs="*",
+                            help="Messages to send (messages can also be sent from standard input)")
 
     group_receive = parser.add_argument_group("Receive messages")
     group_receive.add_argument("-s", "--src", action='append',
@@ -48,26 +49,20 @@ def run():
 
     # Send file
     if args.file:
-        for dst in args.dst:
-            upload_file(dst, args.file)
+        upload_file(args.dst, args.file)
         return 0
 
     # Pipe content
-    # TODO we shouldn't have to specify "-" if no file and no message are
-    # defined.
-    if args.messages == ["-"]:
+    if not args.messages:
         pipe(args.dst, pre=args.pre)
         return 0
 
     # Send messages
-    # TODO we should remove the possibility to send messages to multiples
-    # channels at a time, it's useless
-    for dst in args.dst:
-        for message in args.messages:
-            if args.run:
-                run_command(dst, message)
-            else:
-                send_message(dst, message, pre=args.pre)
+    for message in args.messages:
+        if args.run:
+            run_command(args.dst, message)
+        else:
+            send_message(args.dst, message, pre=args.pre)
     return 0
 
 # pylint: disable=too-many-return-statements
@@ -76,8 +71,6 @@ def args_error_message(args):
         return "Incompatible arguments: --src and --dst\n"
     if not args.dst and not args.src:
         return "Invalid arguments: one of --src or --dst must be specified\n"
-    if args.dst and not args.messages and not args.file:
-        return "Invalid arguments: when using --dst, one of `messages` or --file must be specified\n"
     if args.dst and args.last:
         return "Incompatible arguments: --dst and --last\n"
     if args.src and args.file:
@@ -95,13 +88,12 @@ def last_messages(sources, count):
 
 ######### Send
 
-def pipe(destinations, pre=False):
-    destination_ids = [utils.get_source_id(destination) for destination in destinations]
+def pipe(destination, pre=False):
+    destination_id = utils.get_source_id(destination)
     for line in sys.stdin:
         line = line.strip()
         if line:
-            for destination_id in destination_ids:
-                slack.post_message(destination_id, line, pre=pre)
+            slack.post_message(destination_id, line, pre=pre)
 
 def run_command(destination, command):
     destination_id = utils.get_source_id(destination)
