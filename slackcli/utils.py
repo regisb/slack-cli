@@ -8,6 +8,12 @@ import sys
 import appdirs
 import slacker
 
+if sys.version[0] == '2':
+    # pylint: disable=undefined-variable
+    ask_user = raw_input
+else:
+    ask_user = input
+
 
 SLACK_TOKEN_PATH = os.path.join(appdirs.user_config_dir("slack-cli"), "slack_token")
 
@@ -63,7 +69,7 @@ def _get_token(token):
 
     # Read from user input
     while not token:
-        token = input(
+        token = ask_user(
 """In order to interact with the Slack API, slack-cli requires a valid Slack API
 token. To create and view your tokens, head over to:
 
