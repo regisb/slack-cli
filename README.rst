@@ -6,6 +6,9 @@ Interact with `Slack <https://slack.com/>`_ from the command line: send
 messages, upload files, send command output, pipe content, all from the confort
 of your terminal.
 
+Member of dozens of Slack teams? No worries, `slack-cli` supports switching
+easily from one team to another.
+
 This was initially a fork of `slacker-cli <https://github.com/juanpabloaj/slacker-cli/>`_
 but the two projects have now considerably diverged.
 
@@ -26,8 +29,8 @@ Usage
 ::
 
     $ slack-cli -h
-    usage: slack-cli [-h] [-t TOKEN] [-d DST] [-f FILE] [--pre] [--run] [-s SRC]
-                     [-l LAST]
+    usage: slack-cli [-h] [-t TOKEN] [-T TEAM] [-d DST] [-f FILE] [--pre] [--run]
+                     [-s SRC] [-l LAST]
                      [messages [messages ...]]
 
     Send, pipe, upload and receive Slack messages from the CLI
@@ -35,9 +38,12 @@ Usage
     optional arguments:
       -h, --help            show this help message and exit
       -t TOKEN, --token TOKEN
-                            Slack token which will be saved to /home/regis/.config
-                            /slack-cli/slack_token. This argument only needs to be
-                            specified once.
+                            Explicitely specify Slack API token which will be
+                            saved to /home/user/.config/slack-cli/slack_token.
+      -T TEAM, --team TEAM  Team domain to interact with. This is the name that
+                            appears in the Slack url: https://xxx.slack.com. Use
+                            this option to interact with different teams. If
+                            unspecified, default to the team that was last used.
 
     Send messages:
       -d DST, --dst DST     Send message to a Slack channel, group or username
@@ -65,6 +71,9 @@ The destination argument may be any user, group or channel::
     $ slack-cli -d general "Hello everyone!"
     $ slack-cli -d slackbot "Hello!"
 
+Switch to a different team anytime with the `-T` flag::
+
+    $ slack-cli -d general -T family "I'll be home in an hour"
 
 Pipe content
 ------------
@@ -123,6 +132,12 @@ Dump (backup) the content of a channel
 Changelog
 =========
 
+v2.0.0 (2017-09-09)
+
+- Add support for multiple teams
+- Fix streaming issues
+- Improve printed message format
+
 v1.0.3 (2017-09-04):
 
 - Add "--last" flag to print an entire conversation
@@ -146,8 +161,3 @@ I am very much open to comments! Please don't be afraid to `raise issues
 
 This work is licensed under the terms of the `MIT License
 <https://tldrlegal.com/license/mit-license>`_
-
-TODO
-----
-
-- Support for multiple Slack teams

@@ -1,81 +1,34 @@
-import os
-import stat
 import sys
 
-import appdirs
 import slacker
 
+from . import token
 
-__all__ = ['client', 'init']
-
-TOKEN_PATH = os.path.join(appdirs.user_config_dir("slack-cli"), "slack_token")
-
-if sys.version[0] == '2':
-    # pylint: disable=undefined-variable
-    ask_user = raw_input
-else:
-    ask_user = input
+__all__ = ['client', 'init', 'post_message']
 
 
 class Slacker(object):
     INSTANCE = None
 
-def init(token=None):
-    token = get_token(token)
+def init(user_token=None, team=None):
+    """
+    This function must be called prior to any use of the Slack API.
+    """
+    user_token = user_token or token.load(team=team)
 
-    # Save token
-    if not os.path.exists(TOKEN_PATH):
-        # Check token
-        try:
-            client().api.test()
-        except slacker.Error:
-            sys.stderr.write("Invalid Slack token: '{}'".format(token))
-            sys.exit(1)
-
-        # Write token file
-        token_directory = os.path.dirname(TOKEN_PATH)
-        if not os.path.exists(token_directory):
-            os.makedirs(token_directory)
-        with open(TOKEN_PATH, "w") as slack_token_file:
-            slack_token_file.write(token)
-        os.chmod(TOKEN_PATH, stat.S_IREAD | stat.S_IWRITE)
+    # Always test token
+    try:
+        slacker.Slacker(user_token).api.test()
+    except slacker.Error:
+        sys.stderr.write("Invalid Slack token: '{}'".format(user_token))
+        sys.exit(1)
 
     # Initialize slacker client globally
-    Slacker.INSTANCE = slacker.Slacker(token)
+    Slacker.INSTANCE = slacker.Slacker(user_token)
 
-def get_token(token):
-    # Read from command line argument
-    token = token or os.environ.get('SLACK_TOKEN')
-
-    # Read from environment variable
-    if not token:
-        token = os.environ.get('SLACK_TOKEN')
-
-    # Read from local config file
-    if not token:
-        try:
-            with open(TOKEN_PATH) as slack_token_file:
-                token = slack_token_file.read().strip()
-        except IOError:
-            pass
-
-    # Read from user input
-    while not token:
-        token = ask_user(
-"""In order to interact with the Slack API, slack-cli requires a valid Slack API
-token. To create and view your tokens, head over to:
-
-    https://api.slack.com/custom-integrations/legacy-tokens
-
-This message will only be printed once. After the first run, the Slack API
-token will be stored in a local configuration file.
-Slack API token: """
-        )
-        if token:
-            token = token.strip()
-
-    return token
-
+    # Save token
+    team = team or client().team.info().body["team"]["domain"]
+    token.save(user_token, team)
 
 def client():
     if Slacker.INSTANCE is None:

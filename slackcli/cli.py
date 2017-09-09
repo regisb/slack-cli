@@ -53,11 +53,15 @@ def run():
         return 0
 
     # Pipe content
+    # TODO we shouldn't have to specify "-" if no file and no message are
+    # defined.
     if args.messages == ["-"]:
         pipe(args.dst, pre=args.pre)
         return 0
 
     # Send messages
+    # TODO we should remove the possibility to send messages to multiples
+    # channels at a time, it's useless
     for dst in args.dst:
         for message in args.messages:
             if args.run:
