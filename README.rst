@@ -2,25 +2,23 @@
 slack-cli
 =========
 
-Interact with `Slack <https://slack.com/>`_ from the command line: send
-messages, upload files, send command output, pipe content, all from the confort
+Effectively interact with `Slack <https://slack.com/>`_ from the command line: send
+messages, upload files, send command output, pipe content... all from the confort
 of your terminal.
 
 Member of dozens of Slack teams? No worries, `slack-cli` supports switching
 easily from one team to another.
 
-This was initially a fork of `slacker-cli <https://github.com/juanpabloaj/slacker-cli/>`_
-but the two projects have now considerably diverged.
-
-Install
-=======
+Quickstart
+==========
 
 ::
 
     $ pip install slack-cli
+    $ slack-cli -d general "Hello everyone!"
 
 
-You should obtain an API token from Slack. To obtain a token, go to the
+You will be asked to provide a Slack API token. It's easy, just get one from the
 `API token generator <https://api.slack.com/custom-integrations/legacy-tokens>`_.
 
 Usage
@@ -163,3 +161,6 @@ I am very much open to comments! Please don't be afraid to `raise issues
 
 This work is licensed under the terms of the `MIT License
 <https://tldrlegal.com/license/mit-license>`_
+
+Note that this project was initially a fork of `slacker-cli <https://github.com/juanpabloaj/slacker-cli/>`_
+but the two projects have now considerably diverged.
