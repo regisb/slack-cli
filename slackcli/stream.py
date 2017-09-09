@@ -2,6 +2,7 @@ import json
 import slacker
 import websocket
 
+from . import names
 from . import utils
 
 
@@ -12,20 +13,21 @@ def receive(token, sources):
         pass
 
 def loop(token, sources):
-    source_ids = utils.get_source_ids(token, sources)
-    print(source_ids)
     connection = get_rtm_websocket(token)
     while True:
         data = json.loads(connection.recv())
-        print(data)
+        if not data:
+            # Sometimes, empty dictionaries are received
+            continue
         if data['type'] == 'hello':
             continue
         if data['type'] == 'message' and 'subtype' not in data:
-            source_id = data.get('channel') or data.get('group') or data.get('user')
-            if source_id not in source_ids:
-                # TODO we have a problem identifying the channel here
+            source_name = names.sourcename(token, data['channel'])
+            if source_name not in sources:
+                # The streaming API provides all messages in all channels, so
+                # we need to do some filtering here
                 continue
-            print(utils.format_message(token, source_ids[source_id], data))
+            print(utils.format_message(token, source_name, data))
 
 def get_rtm_websocket(token):
     slacker_api = slacker.BaseAPI(token)

@@ -8,6 +8,9 @@ import sys
 import appdirs
 import slacker
 
+from . import names
+
+
 if sys.version[0] == '2':
     # pylint: disable=undefined-variable
     ask_user = raw_input
@@ -141,9 +144,9 @@ def search_messages(token, source_name, count=20):
 
 def format_message(token, source_name, message):
     time = datetime.fromtimestamp(float(message['ts']))
-    return "[{} {}]{}: {}".format(
+    return "[@{} {}] {}: {}".format(
         source_name, time.strftime("%Y-%m-%d %H:%M:%S"),
-        username(token, message['user']), message['text']
+        names.username(token, message['user']), message['text']
     )
 
 class ChatAsUser(slacker.Chat):
@@ -153,31 +156,3 @@ class ChatAsUser(slacker.Chat):
             text = "```" + text + "```"
         text = text.strip()
         self.post_message(destination_id, text, as_user=True)
-
-
-
-class UserIndex:
-    """A user index for storing user names without making too many calls to the
-    API.
-    """
-
-    INSTANCE = None
-
-    def __init__(self, token):
-        self.slacker_users = slacker.Users(token)
-        self.user_index = {}
-
-    def name(self, user_id):
-        if user_id not in self.user_index:
-            self.user_index[user_id] = self.slacker_users.info(user_id).body['user']['name']
-        return self.user_index[user_id]
-
-
-def username(token, user_id):
-    """
-    Find the user name associated to a user ID.
-    """
-    if UserIndex.INSTANCE is None:
-        UserIndex.INSTANCE = UserIndex(token)
-
-    return UserIndex.INSTANCE.name(user_id)
