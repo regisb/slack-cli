@@ -26,7 +26,7 @@ setup(
     packages=['slackcli'],
     entry_points={
         'console_scripts': [
-            'slack-cli=slackcli.slack:main',
+            'slack-cli=slackcli.cli:main',
         ],
     },
     classifiers=[

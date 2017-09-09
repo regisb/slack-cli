@@ -1,114 +1,90 @@
-import subprocess
+import os
+import stat
 import sys
 
-from . import stream
-from . import utils
+import appdirs
+import slacker
 
 
-def main():
-    sys.exit(run())
+__all__ = ['client', 'init']
 
-def run():
-    parser = utils.get_parser("""Send, pipe, upload and receive Slack messages from the CLI""")
-    group_send = parser.add_argument_group("Send messages")
-    group_send.add_argument("-d", "--dst", action='append', help="Send message to a Slack channel, group or username")
-    group_send.add_argument("-f", "--file", help="Upload file")
-    group_send.add_argument("--pre", action="store_true", help="Send as verbatim `message`")
-    group_send.add_argument(
-        "--run", action="store_true",
-        help="Run the message as a shell command and send both the message and the command output"
-    )
-    group_send.add_argument("messages", nargs="*", help="Messages to send. Pass \"-\" to send content from stdin.")
+TOKEN_PATH = os.path.join(appdirs.user_config_dir("slack-cli"), "slack_token")
 
-    group_receive = parser.add_argument_group("Receive messages")
-    group_receive.add_argument("-s", "--src", action='append',
-                               help="Receive messages from a Slack channel, group or username")
-    group_receive.add_argument("-l", "--last", type=int,
-                               help="Print the last N messages")
+if sys.version[0] == '2':
+    # pylint: disable=undefined-variable
+    ask_user = raw_input
+else:
+    ask_user = input
 
-    args, token = utils.parse_args(parser)
 
-    # Debug command line arguments
-    error_message = args_error_message(args)
-    if error_message:
-        sys.stderr.write(error_message)
-        parser.print_help()
-        return 1
+class Slacker(object):
+    INSTANCE = None
 
-    # Stream content
-    if args.src and args.last is None:
-        stream.receive(token, args.src)
-        return 0
+def init(token=None):
+    token = get_token(token)
 
-    # Print last messages
-    if args.src and args.last is not None:
-        last_messages(token, args.src, args.last)
-        return 0
+    # Save token
+    if not os.path.exists(TOKEN_PATH):
+        # Check token
+        try:
+            client().api.test()
+        except slacker.Error:
+            sys.stderr.write("Invalid Slack token: '{}'".format(token))
+            sys.exit(1)
 
-    # Send file
-    if args.file:
-        for dst in args.dst:
-            upload_file(token, dst, args.file)
-        return 0
+        # Write token file
+        token_directory = os.path.dirname(TOKEN_PATH)
+        if not os.path.exists(token_directory):
+            os.makedirs(token_directory)
+        with open(TOKEN_PATH, "w") as slack_token_file:
+            slack_token_file.write(token)
+        os.chmod(TOKEN_PATH, stat.S_IREAD | stat.S_IWRITE)
 
-    # Pipe content
-    if args.messages == ["-"]:
-        pipe(token, args.dst, pre=args.pre)
-        return 0
+    # Initialize slacker client globally
+    Slacker.INSTANCE = slacker.Slacker(token)
 
-    # Send messages
-    for dst in args.dst:
-        for message in args.messages:
-            if args.run:
-                run_command(token, dst, message)
-            else:
-                send_message(token, dst, message, pre=args.pre)
-    return 0
+def get_token(token):
+    # Read from command line argument
+    token = token or os.environ.get('SLACK_TOKEN')
 
-# pylint: disable=too-many-return-statements
-def args_error_message(args):
-    if args.dst and args.src:
-        return "Incompatible arguments: --src and --dst\n"
-    if not args.dst and not args.src:
-        return "Invalid arguments: one of --src or --dst must be specified\n"
-    if args.dst and not args.messages and not args.file:
-        return "Invalid arguments: when using --dst, one of `messages` or --file must be specified\n"
-    if args.dst and args.last:
-        return "Incompatible arguments: --dst and --last\n"
-    if args.src and args.file:
-        return "Incompatible arguments: --src and --file\n"
-    if args.file and args.messages:
-        return "Incompatible arguments: `messages` and --file\n"
+    # Read from environment variable
+    if not token:
+        token = os.environ.get('SLACK_TOKEN')
 
-    return None
+    # Read from local config file
+    if not token:
+        try:
+            with open(TOKEN_PATH) as slack_token_file:
+                token = slack_token_file.read().strip()
+        except IOError:
+            pass
 
-######### Receive
+    # Read from user input
+    while not token:
+        token = ask_user(
+"""In order to interact with the Slack API, slack-cli requires a valid Slack API
+token. To create and view your tokens, head over to:
 
-def last_messages(token, sources, count):
-    for source in sources:
-        utils.search_messages(token, source, count=count)
+    https://api.slack.com/custom-integrations/legacy-tokens
 
-######### Send
+This message will only be printed once. After the first run, the Slack API
+token will be stored in a local configuration file.
+Slack API token: """
+        )
+        if token:
+            token = token.strip()
 
-def pipe(token, destinations, pre=False):
-    destination_ids = [utils.get_source_id(token, destination) for destination in destinations]
-    chat = utils.ChatAsUser(token)
-    for line in sys.stdin:
-        line = line.strip()
-        if line:
-            for destination_id in destination_ids:
-                chat.post_formatted_message(destination_id, line, pre=pre)
+    return token
 
-def run_command(token, destination, command):
-    destination_id = utils.get_source_id(token, destination)
-    command_result = subprocess.check_output(command, shell=True)
-    message = "$ " + command + "\n" + command_result.decode("utf-8")
-    utils.ChatAsUser(token).post_formatted_message(destination_id, message, pre=True)
 
-def send_message(token, destination, message, pre=False):
-    destination_id = utils.get_source_id(token, destination)
-    utils.ChatAsUser(token).post_formatted_message(destination_id, message, pre=pre)
+def client():
+    if Slacker.INSTANCE is None:
+        # This is not supposed to happen
+        raise ValueError("Slacker client token was not undefined")
+    return Slacker.INSTANCE
 
-def upload_file(token, destination, path):
-    destination_id = utils.get_source_id(token, destination)
-    utils.upload_file(token, path, destination_id)
+def post_message(destination_id, text, pre=False):
+    if pre:
+        text = "```" + text + "```"
+    text = text.strip()
+    client().chat.post_message(destination_id, text, as_user=True)
