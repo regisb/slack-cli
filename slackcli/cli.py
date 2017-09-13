@@ -1,13 +1,21 @@
 import subprocess
 import sys
 
+from . import errors
 from . import slack
 from . import stream
 from . import utils
 
 
 def main():
-    sys.exit(run())
+    try:
+        sys.exit(run())
+    except errors.SourceDoesNotExistError as e:
+        sys.stderr.write("Channel, group or user '{}' does not exist".format(e.args[0]))
+        sys.exit(1)
+    except errors.InvalidSlackToken as e:
+        sys.stderr.write("Invalid Slack token: '{}'".format(e.args[0]))
+        sys.exit(1)
 
 def run():
     parser = utils.get_parser("""Send, pipe, upload and receive Slack messages from the CLI""")

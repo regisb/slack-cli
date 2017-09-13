@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import argparse
 from datetime import datetime
 
+from . import errors
 from . import names
 from . import slack
 from . import token
@@ -27,20 +28,10 @@ def parse_args(parser):
     slack.init(user_token=args.token, team=args.team)
     return args
 
-
-def is_destination_valid(channel=None, group=None, user=None):
-    """
-    Raise a ValueError if zero or more than one destinations are selected.
-    """
-    if channel is None and group is None and user is None:
-        raise ValueError("You must define one of channel, group or user argument.")
-    if len([a for a in (channel, group, user) if a is not None]) > 1:
-        raise ValueError("You must define only one of channel, group or user argument.")
-
 def get_source_id(source_name):
     sources = get_sources([source_name])
     if not sources:
-        raise ValueError(u"Channel, group or user '{}' does not exist".format(source_name))
+        raise errors.SourceDoesNotExistError(source_name)
     return sources[0]["id"]
 
 def get_source_ids(source_names):

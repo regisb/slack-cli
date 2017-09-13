@@ -1,7 +1,6 @@
-import sys
-
 import slacker
 
+from . import errors
 from . import token
 
 __all__ = ['client', 'init', 'post_message']
@@ -20,8 +19,7 @@ def init(user_token=None, team=None):
     try:
         slacker.Slacker(user_token).api.test()
     except slacker.Error:
-        sys.stderr.write("Invalid Slack token: '{}'".format(user_token))
-        sys.exit(1)
+        raise errors.InvalidSlackToken(user_token)
 
     # Initialize slacker client globally
     Slacker.INSTANCE = slacker.Slacker(user_token)

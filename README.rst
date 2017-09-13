@@ -131,6 +131,14 @@ Dump (backup) the content of a channel
 Changelog
 =========
 
+v2.0.2 (2017-09-13)
+
+- Better error management
+
+v2.0.1 (2017-09-09)
+
+- Simplify reading from stdin
+
 v2.0.0 (2017-09-09)
 
 - Add support for multiple teams
