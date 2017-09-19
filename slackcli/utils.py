@@ -74,7 +74,8 @@ def search_messages(source_name, count=20):
 
 def format_message(source_name, message):
     time = datetime.fromtimestamp(float(message['ts']))
+    name = names.username(message['user']) if ('user' in message and len(message['user']) > 0) else message['username']
     return "[@{} {}] {}: {}".format(
         source_name, time.strftime("%Y-%m-%d %H:%M:%S"),
-        names.username(message['user']), message['text']
+        names, message['text']
     )
