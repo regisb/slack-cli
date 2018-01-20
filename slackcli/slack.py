@@ -25,7 +25,14 @@ def init(user_token=None, team=None):
     Slacker.INSTANCE = slacker.Slacker(user_token)
 
     # Save token
-    team = team or client().team.info().body["team"]["domain"]
+    try:
+        team = team or client().team.info().body["team"]["domain"]
+    except slacker.Error as e:
+        message = e.args[0]
+        if e.args[0] == 'missing_scope':
+            message = "Missing scope on token {}. This token requires the 'dnd:info' scope."
+        raise errors.InvalidSlackToken(message)
+
     token.save(user_token, team)
 
 def client():
