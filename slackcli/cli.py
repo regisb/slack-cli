@@ -32,9 +32,14 @@ def run():
 
     group_receive = parser.add_argument_group("Receive messages")
     group_receive.add_argument("-s", "--src", action='append',
-                               help="Receive messages from a Slack channel, group or username")
+                               help="""Receive messages from a Slack channel,
+                               group or username. This option can be specified
+                               multiple times. When streaming, use 'all' to
+                               stream from all sources.""")
     group_receive.add_argument("-l", "--last", type=int,
-                               help="Print the last N messages")
+                               help="""Print the last N messages. If this option
+                               is not specified, messages will be streamed from
+                               the requested sources.""")
 
     args = utils.parse_args(parser)
 

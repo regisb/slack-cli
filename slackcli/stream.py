@@ -29,7 +29,7 @@ def loop(sources):
             continue
         if data['type'] == 'message' and 'subtype' not in data:
             source_name = names.sourcename(data['channel'])
-            if source_name not in sources:
+            if source_name not in sources and 'all' not in sources:
                 # The streaming API provides all messages in all channels, so
                 # we need to do some filtering here
                 continue

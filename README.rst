@@ -72,7 +72,7 @@ The destination argument may be any user, group or channel::
 
 Switch to a different team anytime with the `-T` flag::
 
-    $ slack-cli -d general -T family "I'll be home in an hour"
+    $ slack-cli -T family -d general "I'll be home in an hour"
 
 Pipe content
 ------------
@@ -113,12 +113,16 @@ will send to user `john`::
         Our first 1.0 release!
     
 
-Stream content from a channel
------------------------------
+Stream conversation contents
+----------------------------
 
-For monitoring a Slack channel from the terminal::
+Stream the content of a channel::
 
     $ slack-cli -s general
+
+Monitor all conversations::
+
+    $ slack-cli -s all
 
 Dump (backup) the content of a channel
 --------------------------------------
@@ -130,6 +134,11 @@ Dump (backup) the content of a channel
 
 Changelog
 =========
+
+v2.1.0 (in progress)
+
+- Faster search/stream
+- Stream from all channels (`-s all`)
 
 v2.0.2 (2017-09-13)
 
