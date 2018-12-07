@@ -1,7 +1,7 @@
 __pycache__/
 *.py[cod]
 .Python
-env/
+env*/
 bin/
 build/
 develop-eggs/
