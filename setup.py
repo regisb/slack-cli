@@ -17,8 +17,8 @@ setup(
     url="https://github.com/regisb/slack-cli",
     install_requires=[
         "appdirs<1.5",
-        "slacker<0.10.0",
-        "websocket-client<0.40.0",
+        "slacker<0.12.0",
+        "websocket-client<0.55.0",
     ],
     license='MIT',
     author="Régis Behmo",
