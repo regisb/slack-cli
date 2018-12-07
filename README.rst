@@ -157,7 +157,7 @@ is not recommended `for security reasons <https://unix.stackexchange.com/questio
 Changelog
 =========
 
-v2.1.0 (in progress)
+v2.1.0 (2018-12-07)
 
 - Faster search/stream
 - Stream from all channels (`-s all`)
