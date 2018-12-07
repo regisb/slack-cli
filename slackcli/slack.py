@@ -13,18 +13,31 @@ def init(user_token=None, team=None):
     """
     This function must be called prior to any use of the Slack API.
     """
-    user_token = user_token or token.load(team=team)
-
-    # Always test token
-    try:
-        slacker.Slacker(user_token).api.test()
-    except slacker.Error:
-        raise errors.InvalidSlackToken(user_token)
+    user_token = user_token
+    loaded_token = token.load(team=team)
+    must_save_token = False
+    if user_token:
+        if user_token != loaded_token:
+            must_save_token = True
+    else:
+        user_token = loaded_token
+        if not user_token:
+            user_token = token.ask(team=team)
+            must_save_token = True
 
     # Initialize slacker client globally
     Slacker.INSTANCE = slacker.Slacker(user_token)
+    if must_save_token:
+        save_token(user_token, team=team)
 
-    # Save token
+def save_token(user_token, team=None):
+    # Always test token before saving
+    try:
+        client().api.test()
+    except slacker.Error:
+        raise errors.InvalidSlackToken(user_token)
+
+    # Get team
     try:
         team = team or client().team.info().body["team"]["domain"]
     except slacker.Error as e:
@@ -33,6 +46,7 @@ def init(user_token=None, team=None):
             message = "Missing scope on token {}. This token requires the 'dnd:info' scope."
         raise errors.InvalidSlackToken(message)
 
+    # Save token
     token.save(user_token, team)
 
 def client():

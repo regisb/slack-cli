@@ -33,11 +33,12 @@ def load(team=None):
     else:
         try:
             with open(TOKEN_PATH) as slack_token_file:
-                token = slack_token_file.read().strip()
+                return slack_token_file.read().strip()
         except IOError:
             pass
 
-    # Read from user input
+def ask(team=None):
+    token = None
     while not token:
         message = """In order to interact with the Slack API, slack-cli requires a valid Slack API
 token. To create and view your tokens, head over to:
@@ -51,7 +52,6 @@ Your Slack API token{}: """.format(
             " for the " + team + " team" if team else ""
         )
         token = ask_user(message).strip()
-
     return token
 
 def save(token, team):
