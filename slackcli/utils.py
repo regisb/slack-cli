@@ -1,32 +1,10 @@
 from __future__ import unicode_literals
-import argparse
 from datetime import datetime
 
 from . import errors
 from . import names
 from . import slack
-from . import token
 
-
-
-def get_parser(description):
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument("-t", "--token",
-                        help="Explicitely specify Slack API token which will be saved to {}.".format(token.TOKEN_PATH))
-    parser.add_argument("-T", "--team", help="""
-        Team domain to interact with. This is the name that appears in the
-        Slack url: https://xxx.slack.com. Use this option to interact with
-        different teams. If unspecified, default to the team that was last used.
-    """)
-    return parser
-
-def parse_args(parser):
-    """
-    Parse cli arguments and initialize slack client.
-    """
-    args = parser.parse_args()
-    slack.init(user_token=args.token, team=args.team)
-    return args
 
 def get_destination_id(name):
     return get_resource(name)[1]['id']

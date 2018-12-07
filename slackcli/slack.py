@@ -55,8 +55,12 @@ def client():
         raise ValueError("Slacker client token was not undefined")
     return Slacker.INSTANCE
 
-def post_message(destination_id, text, pre=False):
+def post_message(destination_id, text, pre=False, username=None):
     if pre:
         text = "```" + text + "```"
     text = text.strip()
-    client().chat.post_message(destination_id, text, as_user=True)
+    client().chat.post_message(
+        destination_id, text,
+        as_user=(not username),
+        username=username,
+    )

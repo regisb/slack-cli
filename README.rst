@@ -28,7 +28,7 @@ Usage
 
     $ slack-cli -h
     usage: slack-cli [-h] [-t TOKEN] [-T TEAM] [-d DST] [-f FILE] [--pre] [--run]
-                     [-s SRC] [-l LAST]
+                     [-u USER] [-s SRC] [-l LAST]
                      [messages [messages ...]]
 
     Send, pipe, upload and receive Slack messages from the CLI
@@ -49,33 +49,33 @@ Usage
       --pre                 Send as verbatim `message`
       --run                 Run the message as a shell command and send both the
                             message and the command output
+      -u USER, --user USER  Send message not as the current user, but as a bot
+                            with the specified user name
       messages              Messages to send (messages can also be sent from
                             standard input)
 
     Receive messages:
       -s SRC, --src SRC     Receive messages from a Slack channel, group or
-                            username
-      -l LAST, --last LAST  Print the last N messages
+                            username. This option can be specified multiple times.
+                            When streaming, use 'all' to stream from all sources.
+      -l LAST, --last LAST  Print the last N messages. If this option is not
+                            specified, messages will be streamed from the
+                            requested sources.
 
-Note that the Slack token may optionally be stored in an environment variable (although it
-is not recommended `for security reasons <https://unix.stackexchange.com/questions/369566/why-is-passing-the-secrets-via-environmental-variables-considered-extremely-ins>`_)::
-
-    $ export SLACK_TOKEN="slack_token_string"
-
-Send message
-------------
+Sending messages
+----------------
 
 The destination argument may be any user, group or channel::
 
     $ slack-cli -d general "Hello everyone!"
     $ slack-cli -d slackbot "Hello!"
 
-Switch to a different team anytime with the `-T` flag::
+Send message with a different username::
 
-    $ slack-cli -T family -d general "I'll be home in an hour"
+    $ slack-cli -d general -u terminator "I'll be back"
 
-Pipe content
-------------
+Pipe content from stdin
+~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -87,14 +87,14 @@ backticks ("\`\`\`"). This is achieved with the `--pre` option::
     $ tail -f /var/log/nginx/access.log | slack-cli -d devteam --pre
 
 Upload file
------------
+~~~~~~~~~~~
 
 ::
 
     $ slack-cli -f /etc/nginx/sites-available/default.conf -d alice
 
 Run command and send output
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is really convenient for showing both the result of a command and the
 command itself::
@@ -112,9 +112,11 @@ will send to user `john`::
         
         Our first 1.0 release!
     
+Receiving messages
+------------------
 
-Stream conversation contents
-----------------------------
+Stream to stdout
+~~~~~~~~~~~~~~~~
 
 Stream the content of a channel::
 
@@ -125,12 +127,32 @@ Monitor all conversations::
     $ slack-cli -s all
 
 Dump (backup) the content of a channel
---------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
     $ slack-cli -s general --last 10000 > general.log
     $ slack-cli -s myboss --last 10000 > covermyass.log
+
+Authentication
+--------------
+
+Switch to a different team
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Switch to a different team anytime with the `-T` flag::
+
+    $ slack-cli -T family -d general "I'll be home in an hour"
+
+The new team will become the new default team.
+
+Token management
+~~~~~~~~~~~~~~~~
+
+Note that the Slack token may optionally be stored in an environment variable (although it
+is not recommended `for security reasons <https://unix.stackexchange.com/questions/369566/why-is-passing-the-secrets-via-environmental-variables-considered-extremely-ins>`_)::
+
+    $ export SLACK_TOKEN="slack_token_string"
 
 Changelog
 =========
@@ -139,6 +161,7 @@ v2.1.0 (in progress)
 
 - Faster search/stream
 - Stream from all channels (`-s all`)
+- Send messages as a different user (`-u terminator`)
 
 v2.0.2 (2017-09-13)
 
