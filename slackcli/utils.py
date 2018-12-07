@@ -74,8 +74,10 @@ def search_messages(source_name, count=20):
 
 def format_message(source_name, message):
     time = datetime.fromtimestamp(float(message['ts']))
-    # Some bots do not have a 'user' entry, but only a 'username'
-    username = names.username(message['user']) if message.get('user') else message['username']
+    # Some bots do not have a 'user' entry, but only a 'username'.
+    # However, we prefer to rely on the 'username' entry if it is present, for
+    # performance reasons.
+    username = message.get('username') or names.username(message['user'])
     return "[@{} {}] {}: {}".format(
         source_name, time.strftime("%Y-%m-%d %H:%M:%S"),
         username, message['text']
