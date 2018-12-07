@@ -59,7 +59,7 @@ def search_messages(source_name, count=20):
     messages = []
     page = 1
     while len(messages) < count:
-        response_body = slack.client().search.messages("in:{}".format(source_name), page=page, count=1000).body
+        response_body = slack.client().search.messages("in:{}".format(source_name), page=page, count=min(count, 1000)).body
         # Note that in the response, messages are sorted by *descending* date
         # (most recent first)
         messages = response_body["messages"]["matches"][::-1] + messages
