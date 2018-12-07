@@ -29,17 +29,12 @@ def parse_args(parser):
     return args
 
 def get_source_id(source_name):
-    sources = get_sources([source_name])
+    sources = get_source_ids([source_name])
     if not sources:
         raise errors.SourceDoesNotExistError(source_name)
-    return sources[0]["id"]
+    return sources.keys()[0]
 
 def get_source_ids(source_names):
-    return {
-        s['id']: s['name'] for s in get_sources(source_names)
-    }
-
-def get_sources(source_names):
     def filter_objects(objects):
         return [
             obj for obj in objects if len(source_names) == 0 or obj['name'] in source_names
@@ -49,7 +44,10 @@ def get_sources(source_names):
     sources += filter_objects(slack.client().channels.list().body['channels'])
     sources += filter_objects(slack.client().groups.list().body['groups'])
     sources += filter_objects(slack.client().users.list().body['members'])
-    return sources
+
+    return {
+        s['id']: s['name'] for s in sources
+    }
 
 def upload_file(path, destination_id):
     return slack.client().files.upload(path, channels=destination_id)
