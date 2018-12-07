@@ -102,22 +102,22 @@ def last_messages(sources, count):
 ######### Send
 
 def pipe(destination, pre=False):
-    destination_id = utils.get_source_id(destination)
+    destination_id = utils.get_destination_id(destination)
     for line in sys.stdin:
         line = line.strip()
         if line:
             slack.post_message(destination_id, line, pre=pre)
 
 def run_command(destination, command):
-    destination_id = utils.get_source_id(destination)
+    destination_id = utils.get_destination_id(destination)
     command_result = subprocess.check_output(command, shell=True)
     message = "$ " + command + "\n" + command_result.decode("utf-8")
     slack.post_message(destination_id, message, pre=True)
 
 def send_message(destination, message, pre=False):
-    destination_id = utils.get_source_id(destination)
+    destination_id = utils.get_destination_id(destination)
     slack.post_message(destination_id, message, pre=pre)
 
 def upload_file(destination, path):
-    destination_id = utils.get_source_id(destination)
+    destination_id = utils.get_destination_id(destination)
     utils.upload_file(path, destination_id)

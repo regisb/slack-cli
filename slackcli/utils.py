@@ -28,26 +28,23 @@ def parse_args(parser):
     slack.init(user_token=args.token, team=args.team)
     return args
 
-def get_source_id(source_name):
-    sources = get_source_ids([source_name])
-    if not sources:
-        raise errors.SourceDoesNotExistError(source_name)
-    return sources.keys()[0]
+def get_destination_id(name):
+    # We should probably switch to the conversations.list method once Slacker
+    # supports it:
+    # https://api.slack.com/methods/conversations.list
+    # https://github.com/os/slacker/issues/116
+    fetchers = [
+        lambda: slack.client().channels.list().body['channels'],
+        lambda: slack.client().groups.list().body['groups'],
+        lambda: slack.client().users.list().body['members'],
+    ]
+    for fetcher in fetchers:
+        for resource in fetcher():
+            if resource['name'] == name:
+                return resource['id']
 
-def get_source_ids(source_names):
-    def filter_objects(objects):
-        return [
-            obj for obj in objects if len(source_names) == 0 or obj['name'] in source_names
-        ]
+    raise errors.SourceDoesNotExistError(name)
 
-    sources = []
-    sources += filter_objects(slack.client().channels.list().body['channels'])
-    sources += filter_objects(slack.client().groups.list().body['groups'])
-    sources += filter_objects(slack.client().users.list().body['members'])
-
-    return {
-        s['id']: s['name'] for s in sources
-    }
 
 def upload_file(path, destination_id):
     return slack.client().files.upload(path, channels=destination_id)
