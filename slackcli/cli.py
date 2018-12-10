@@ -22,6 +22,7 @@ def main():
 def run():
     parser = argparse.ArgumentParser(description="""Send, pipe, upload and
                                      receive Slack messages from the CLI""")
+    parser.add_argument("-v", "--version", action='version', version='%(prog)s 2.1.0')
     parser.add_argument("-t", "--token",
                         help="Explicitely specify Slack API token which will be saved to {}.".format(token.TOKEN_PATH))
     parser.add_argument("-T", "--team",
