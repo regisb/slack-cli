@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
 from datetime import datetime
+import requests
 
 from . import errors
 from . import names
 from . import slack
+from . import token
 
 
 def get_destination_id(name):
@@ -30,7 +32,7 @@ def upload_file(path, destination_id):
     return slack.client().files.upload(path, channels=destination_id)
 
 
-def search_messages(source_name, count=20):
+def search_messages(source_name, count=20, output=["-"]):
     resource_type, resource = get_resource(source_name)
     # channel->channels, group->groups, but im->im :-(
     method_name = resource_type + 's'
@@ -55,6 +57,19 @@ def search_messages(source_name, count=20):
     # Print the last count messages, from last to first
     for message in messages[::-1]:
         print(format_message(source_name, message))
+
+        for att in message.get('files', []):
+            if output is not None:
+                for spec in output:
+                    if len(spec) == 1 or spec[0] == att['name']:
+                        out = spec[-1]
+                        if out == "-":
+                            out = sys.stdout
+
+                        req = requests.get(att['url_private_download'], allow_redirects=True, headers={'Authorization': "Bearer {}".format(token.load())})
+                        open(out, 'wb').write(req.content)
+                        break
+
 
 def format_message(source_name, message):
     time = datetime.fromtimestamp(float(message['ts']))

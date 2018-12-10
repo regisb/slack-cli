@@ -17,6 +17,7 @@ setup(
     url="https://github.com/regisb/slack-cli",
     install_requires=[
         "appdirs<1.5",
+        "requests<2.21.0",
         "slacker<0.12.0",
         "websocket-client<0.55.0",
     ],

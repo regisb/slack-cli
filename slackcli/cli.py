@@ -22,6 +22,7 @@ def main():
 def run():
     parser = argparse.ArgumentParser(description="""Send, pipe, upload and
                                      receive Slack messages from the CLI""")
+    parser.add_argument("-v", "--version", action='version', version='%(prog)s 2.1.0')
     parser.add_argument("-t", "--token",
                         help="Explicitely specify Slack API token which will be saved to {}.".format(token.TOKEN_PATH))
     parser.add_argument("-T", "--team",
@@ -59,6 +60,8 @@ def run():
                                help="""Print the last N messages. If this option
                                is not specified, messages will be streamed from
                                the requested sources.""")
+    group_receive.add_argument("-o", "--output", action='append',
+                               help="""Write attachments to file.""")
 
     args = parser.parse_args()
     slack.init(user_token=args.token, team=args.team)
@@ -77,7 +80,7 @@ def run():
 
     # Print last messages
     if args.src and args.last is not None:
-        last_messages(args.src, args.last)
+        last_messages(args.src, args.last, args.output)
         return 0
 
     # Send file
@@ -115,9 +118,12 @@ def args_error_message(args):
 
 ######### Receive
 
-def last_messages(sources, count):
+def last_messages(sources, count, output):
+    if output is not None:
+        output = [o.split(":", 2) for o in output]
+
     for source in sources:
-        utils.search_messages(source, count=count)
+        utils.search_messages(source, count=count, output=output)
 
 ######### Send
 
