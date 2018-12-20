@@ -70,6 +70,8 @@ def run():
         parser.print_help()
         return 1
 
+    ### Receive messages
+
     # Stream content
     if args.src and args.last is None:
         stream.receive(args.src)
@@ -79,6 +81,8 @@ def run():
     if args.src and args.last is not None:
         last_messages(args.src, args.last)
         return 0
+
+    ### Send messages
 
     # Send file
     if args.file:
@@ -117,7 +121,7 @@ def args_error_message(args):
 
 def last_messages(sources, count):
     for source in sources:
-        utils.search_messages(source, count=count)
+        utils.print_messages(source, count=count)
 
 ######### Send
 

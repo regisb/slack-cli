@@ -6,6 +6,8 @@ from . import token
 __all__ = ['client', 'init', 'post_message']
 
 
+BaseError = slacker.Error
+
 class Slacker(object):
     INSTANCE = None
 

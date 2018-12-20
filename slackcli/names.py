@@ -1,6 +1,8 @@
 from . import slack
 
+
 __all__ = ['username', 'sourcename']
+
 
 class Singleton(object):
 
@@ -32,6 +34,14 @@ def username(user_id):
     """
     return UserIndex.instance().name(user_id)
 
+def get_username(slack_id, default=None):
+    """
+    Same as `username` but does not raise.
+    """
+    try:
+        return username(slack_id)
+    except slack.BaseError:
+        return default
 
 class SourceIndex(Singleton):
     """An index for storing channel/group names without making too many calls to the

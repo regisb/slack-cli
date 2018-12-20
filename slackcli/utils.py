@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from datetime import datetime
+import re
 
 from . import errors
 from . import names
@@ -30,7 +31,7 @@ def upload_file(path, destination_id):
     return slack.client().files.upload(path, channels=destination_id)
 
 
-def search_messages(source_name, count=20):
+def print_messages(source_name, count=20):
     resource_type, resource = get_resource(source_name)
     # channel->channels, group->groups, but im->im :-(
     method_name = resource_type + 's'
@@ -56,15 +57,33 @@ def search_messages(source_name, count=20):
     for message in messages[::-1]:
         print(format_message(source_name, message))
 
+
 def format_message(source_name, message):
     time = datetime.fromtimestamp(float(message['ts']))
     # Some bots do not have a 'user' entry, but only a 'username'.
     # However, we prefer to rely on the 'username' entry if it is present, for
     # performance reasons.
     username = message.get('username') or names.username(message['user'])
+
+    text = message['text']
+
+    # Replace user ids by usernames in message text: "<@USLACKBOT>" -> "<@slackbot>"
+    text = re.subn(
+        r'\<@(?P<userid>[A-Z0-9]+)\>',
+        lambda match: '<@{}>'.format(names.get_username(match['userid'], match['userid'])),
+        text,
+    )[0]
+
+    # Replace channel id|name by name: "<#C02SNA1U4|general>" -> "<#general>"
+    text = re.subn(
+        r'\<#(?P<channelid>[A-Z0-9]+)\|(?P<channelname>[a-z0-9_-]+)\>',
+        lambda match: '<#{}>'.format(match['channelname']),
+        text,
+    )[0]
+
     formatted = "[@{} {}] {}: {}".format(
         source_name, time.strftime("%Y-%m-%d %H:%M:%S"),
-        username, message['text']
+        username, text
     )
     for f in message.get('files', []):
         formatted += "\n    {}: {}".format(f['name'], f['url_private'])

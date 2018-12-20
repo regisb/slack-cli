@@ -157,6 +157,10 @@ is not recommended `for security reasons <https://unix.stackexchange.com/questio
 Changelog
 =========
 
+v2.1.1 (2018-12-20)
+
+- Correctly print user and channel names
+
 v2.1.0 (2018-12-07)
 
 - Faster search/stream
