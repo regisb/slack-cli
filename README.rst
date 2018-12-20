@@ -154,8 +154,33 @@ is not recommended `for security reasons <https://unix.stackexchange.com/questio
 
     $ export SLACK_TOKEN="slack_token_string"
 
+Bonus stuff ᕕ(⌐■_■)ᕗ ♪♬
+-----------------------
+
+Autocomplete
+~~~~~~~~~~~~
+
+Channel, group and user names can be autocompleted from the command line for `bash` users. Add the following line to `~/.bashrc`::
+
+    eval "$(register-python-argcomplete slack-cli)"
+
+Then, try autocompletion with::
+
+    $ slack -s gene<tab>
+
+or::
+    
+    $ slack -d <tab><tab>
+
+Unfortunately, I did not manage to get autocompletion to work with `zsh` ¯\_( ͡° ͜ʖ ͡°)_/¯ Please let me know if you have more success.
+
 Changelog
 =========
+
+v2.1.2 (2018-12-21)
+
+- CLI bash autocompletion
+- Fix default token saving on team change
 
 v2.1.1 (2018-12-20)
 

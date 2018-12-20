@@ -1,12 +1,25 @@
+#!/usr/bin/env python
+# PYTHON_ARGCOMPLETE_OK
+
 import argparse
 import subprocess
 import sys
+
+import argcomplete
 
 from . import errors
 from . import slack
 from . import stream
 from . import token
 from . import utils
+
+
+def resource_completer(**kwargs):
+    # resource name autocomplete for bash. To activate this, run `eval
+    # "$(register-python-argcomplete slack-cli)"`. Note that this works in bash
+    # only, not in zsh.
+    slack.init()
+    return [r['name'] for _, r in utils.iter_resources()]
 
 
 def main():
@@ -32,7 +45,10 @@ def run():
                         used.""")
 
     group_send = parser.add_argument_group("Send messages")
-    group_send.add_argument("-d", "--dst", help="Send message to a Slack channel, group or username")
+    group_send.add_argument(
+        "-d", "--dst",
+        help="Send message to a Slack channel, group or username"
+    ).completer = resource_completer
     group_send.add_argument("-f", "--file", help="Upload file")
     group_send.add_argument("--pre", action="store_true", help="Send as verbatim `message`")
     group_send.add_argument(
@@ -54,12 +70,13 @@ def run():
                                help="""Receive messages from a Slack channel,
                                group or username. This option can be specified
                                multiple times. When streaming, use 'all' to
-                               stream from all sources.""")
+                               stream from all sources.""").completer = resource_completer
     group_receive.add_argument("-l", "--last", type=int,
                                help="""Print the last N messages. If this option
                                is not specified, messages will be streamed from
                                the requested sources.""")
 
+    argcomplete.autocomplete(parser)
     args = parser.parse_args()
     slack.init(user_token=args.token, team=args.team)
 

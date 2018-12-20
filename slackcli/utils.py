@@ -11,6 +11,12 @@ def get_destination_id(name):
     return get_resource(name)[1]['id']
 
 def get_resource(name):
+    for resource_type, resource in iter_resources():
+        if resource['name'] == name:
+            return resource_type, resource
+    raise errors.SourceDoesNotExistError(name)
+
+def iter_resources():
     # We should probably switch to the conversations.list method once Slacker
     # supports it:
     # https://api.slack.com/methods/conversations.list
@@ -22,10 +28,7 @@ def get_resource(name):
     ]
     for resource_type, fetcher in fetchers:
         for resource in fetcher():
-            if resource['name'] == name:
-                return resource_type, resource
-    raise errors.SourceDoesNotExistError(name)
-
+            yield resource_type, resource
 
 def upload_file(path, destination_id):
     return slack.client().files.upload(path, channels=destination_id)

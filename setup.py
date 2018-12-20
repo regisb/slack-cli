@@ -11,11 +11,12 @@ def read(*paths):
 
 setup(
     name="slack-cli",
-    version="2.1.1",
+    version="2.1.2",
     description="Slack CLI for productive developers",
     long_description=(read('README.rst')),
     url="https://github.com/regisb/slack-cli",
     install_requires=[
+        "argcomplete",
         "appdirs<1.5",
         "slacker<0.12.0",
         "websocket-client<0.55.0",
