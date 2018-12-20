@@ -27,7 +27,9 @@ def load(team=None):
             with open(TEAMS_PATH) as teams_file:
                 teams = json.load(teams_file)
             if team in teams:
-                return teams[team]["token"]
+                token = teams[team]["token"]
+                save_default(token)
+                return token
         except IOError:
             pass
     else:
@@ -55,17 +57,17 @@ Your Slack API token{}: """.format(
     return token
 
 def save(token, team):
-    # Create directory
-    token_directory = os.path.dirname(TOKEN_PATH)
-    if not os.path.exists(token_directory):
-        os.makedirs(token_directory)
+    save_default(token)
+    save_team(token, team)
 
-    # Save default token
+def save_default(token):
+    ensure_directory_exists(TOKEN_PATH)
     with open(TOKEN_PATH, "w") as slack_token_file:
         slack_token_file.write(token)
     os.chmod(TOKEN_PATH, stat.S_IREAD | stat.S_IWRITE)
 
-    # Save team token
+def save_team(token, team):
+    ensure_directory_exists(TOKEN_PATH)
     teams = {}
     if os.path.exists(TEAMS_PATH):
         with open(TEAMS_PATH) as teams_file:
@@ -74,3 +76,8 @@ def save(token, team):
     with open(TEAMS_PATH, 'w') as teams_file:
         json.dump(teams, teams_file, sort_keys=True, indent=4)
     os.chmod(TEAMS_PATH, stat.S_IREAD | stat.S_IWRITE)
+
+def ensure_directory_exists(path):
+    directory = os.path.dirname(path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
