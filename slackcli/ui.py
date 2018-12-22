@@ -7,12 +7,17 @@ import sys
 # https://github.com/django/django/blob/master/django/core/management/color.py
 # https://askubuntu.com/questions/821157/print-a-256-color-test-pattern-in-the-terminal
 
+class Colors:
+    SLACK_PURPLE = 5
+    LINK_BLUE = 27
+
+
 def supports_color():
     """
     Returns True if the running system's terminal supports color, and False
     otherwise.
     """
-    if 'SLACK_CLI_NO_COLORS' in os.environ:
+    if 'SLACK_CLI_NO_COLOR' in os.environ:
         return False
 
     plat = sys.platform
@@ -27,7 +32,7 @@ RESET_CODE = "\x1b[39;49;00m"
 
 def color(fingerprint):
     if fingerprint == "general":
-        return 5 # slack purple
+        return Colors.SLACK_PURPLE
     return int(hashlib.md5(fingerprint.encode()).hexdigest(), 16) % 256
 
 def colorize(text, color_id, effect='normal'):
@@ -44,7 +49,5 @@ def colorize(text, color_id, effect='normal'):
     term_code = "\x1b[%s38;5;%dm" % (effects[effect], color_id)
     return term_code + text + RESET_CODE
 
-def underline(text):
-    if not USE_COLORS:
-        return text
-    return "\x1b[4m" + text + RESET_CODE
+def hyperlink(text):
+    return colorize(text, Colors.LINK_BLUE, 'underline')

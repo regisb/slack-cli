@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 import re
 
+from . import emoji
 from . import errors
 from . import names
 from . import slack
@@ -96,7 +97,7 @@ def format_message(source_name, message):
         ui.color(username),
         'bold'
     )
-    formatted += text
+    formatted += emoji.emojize(text)
     for f in message.get('files', []):
-        formatted += "\n    {}: {}".format(f['name'], ui.underline(f['url_private']))
+        formatted += "\n    {}: {}".format(f['name'], ui.hyperlink(f['url_private']))
     return formatted

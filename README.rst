@@ -9,6 +9,8 @@ of your terminal.
 Member of dozens of Slack teams? No worries, with ``slack-cli`` you can easily switch
 from one team to another.
 
+.. image:: https://github.com/regisb/slack-cli/blob/master/demo.png
+
 Quickstart
 ==========
 
@@ -177,9 +179,53 @@ Unfortunately, I did not manage to get autocompletion to work with ``zsh`` ¯\\_
 Colors
 ~~~~~~
 
-Color output is activated by default in compatible terminals. To deactivate colors, define the ``SLACK_CLI_NO_COLORS`` environment variable::
+Color output is activated by default in compatible terminals. To deactivate colors, define the ``SLACK_CLI_NO_COLOR`` environment variable::
 
     export SLACK_CLI_NO_COLORS=1
+
+Emojis
+~~~~~~
+
+Emoji short codes will be automatically replaced by their corresponding unicode value. For instance, ``:smile:`` will become 😄. However, **these characters will display properly only if your terminal supports them!** I stronly encourage you to download patched fonts from `Nerd Fonts <https://nerdfonts.com/>`_ and to configure your terminal to use them. For instance, in Ubuntu this is how I downloaded the DejaVuSansMono fonts::
+
+    wget -O ~/.fonts/DejaVuSansMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/DejaVuSansMono.zip
+    cd ~/.fonts
+    unzip DejaVuSansMono.zip
+    fc-cache -vf ~/.fonts
+
+If emojis are not your thing, you can disable them globally with the ``SLACK_CLI_NO_EMOJI`` environment variable::
+
+    export SLACK_CLI_NO_EMOJI=1
+
+Development
+-----------
+
+Contributions
+~~~~~~~~~~~~~
+
+I am very much open to comments! Please don't be afraid to `raise issues
+<https://github.com/regisb/slack-cli/issues>`_ or `open pull requests
+<https://github.com/regisb/slack-cli/pulls>`_.
+
+This work is licensed under the terms of the `MIT License
+<https://tldrlegal.com/license/mit-license>`_
+
+Note that this project was initially a fork of `slacker-cli <https://github.com/juanpabloaj/slacker-cli/>`_
+but the two projects have now considerably diverged.
+
+Tests
+~~~~~
+
+Run unit tests::
+
+    python -m unittest discover tests
+
+Update emojis
+~~~~~~~~~~~~~
+
+::
+
+    python -c "from slackcli.emoji import Emojis; Emojis.download()"
 
 Changelog
 =========
@@ -232,15 +278,3 @@ v1.0 (2017-07-06):
 - Interactive API token input.
 - Automatic token creation check.
     
-Development
-===========
-
-I am very much open to comments! Please don't be afraid to `raise issues
-<https://github.com/regisb/slack-cli/issues>`_ or `open pull requests
-<https://github.com/regisb/slack-cli/pulls>`_.
-
-This work is licensed under the terms of the `MIT License
-<https://tldrlegal.com/license/mit-license>`_
-
-Note that this project was initially a fork of `slacker-cli <https://github.com/juanpabloaj/slacker-cli/>`_
-but the two projects have now considerably diverged.
