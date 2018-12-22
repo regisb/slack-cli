@@ -9,7 +9,7 @@ of your terminal.
 Member of dozens of Slack teams? No worries, with ``slack-cli`` you can easily switch
 from one team to another.
 
-.. image:: https://github.com/regisb/slack-cli/blob/master/demo.png
+.. image:: https://raw.githubusercontent.com/regisb/slack-cli/master/demo.png
 
 Quickstart
 ==========
@@ -230,9 +230,10 @@ Update emojis
 Changelog
 =========
 
-v2.2.0 (2018-12-22)
+v2.2.1 (2018-12-22)
 
 - Colorized output
+- Emojis!
 
 v2.1.2 (2018-12-21)
 
