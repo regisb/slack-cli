@@ -5,6 +5,7 @@ import re
 from . import errors
 from . import names
 from . import slack
+from . import ui
 
 
 def get_destination_id(name):
@@ -84,10 +85,18 @@ def format_message(source_name, message):
         text,
     )[0]
 
-    formatted = "[@{} {}] {}: {}".format(
-        source_name, time.strftime("%Y-%m-%d %H:%M:%S"),
-        username, text
+    formatted = ui.colorize(
+        "[@{} {}] ".format(
+            source_name, time.strftime("%Y-%m-%d %H:%M:%S"),
+        ),
+        ui.color(source_name)
     )
+    formatted += ui.colorize(
+        "{}: ".format(username),
+        ui.color(username),
+        'bold'
+    )
+    formatted += text
     for f in message.get('files', []):
-        formatted += "\n    {}: {}".format(f['name'], f['url_private'])
+        formatted += "\n    {}: {}".format(f['name'], ui.underline(f['url_private']))
     return formatted

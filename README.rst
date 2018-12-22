@@ -6,8 +6,8 @@ Effectively interact with `Slack <https://slack.com/>`_ from the command line: s
 messages, upload files, send command output, pipe content... all from the confort
 of your terminal.
 
-Member of dozens of Slack teams? No worries, `slack-cli` supports switching
-easily from one team to another.
+Member of dozens of Slack teams? No worries, with ``slack-cli`` you can easily switch
+from one team to another.
 
 Quickstart
 ==========
@@ -82,7 +82,7 @@ Pipe content from stdin
     $ cat /etc/hosts | slack-cli -d devteam
 
 Usually you will want to format piped content as verbatim content with triple
-backticks ("\`\`\`"). This is achieved with the `--pre` option::
+backticks ("\`\`\`"). This is achieved with the ``--pre`` option::
 
     $ tail -f /var/log/nginx/access.log | slack-cli -d devteam --pre
 
@@ -101,7 +101,7 @@ command itself::
 
     $ slack-cli -d john --run "git log -1"
 
-will send to user `john`::
+will send to user ``john``::
 
     $ git log -1
     commit 013798f5c85043d31f0221a9a32b39298e97fb08
@@ -140,7 +140,7 @@ Authentication
 Switch to a different team
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Switch to a different team anytime with the `-T` flag::
+Switch to a different team anytime with the ``-T`` flag::
 
     $ slack-cli -T family -d general "I'll be home in an hour"
 
@@ -154,8 +154,8 @@ is not recommended `for security reasons <https://unix.stackexchange.com/questio
 
     $ export SLACK_TOKEN="slack_token_string"
 
-Bonus stuff ᕕ(⌐■_■)ᕗ ♪♬
------------------------
+Bells and Whistles ᕕ(⌐■_■)ᕗ ♪♬
+------------------------------
 
 Autocomplete
 ~~~~~~~~~~~~
@@ -172,10 +172,21 @@ or::
     
     $ slack -d <tab><tab>
 
-Unfortunately, I did not manage to get autocompletion to work with `zsh` ¯\_( ͡° ͜ʖ ͡°)_/¯ Please let me know if you have more success.
+Unfortunately, I did not manage to get autocompletion to work with ``zsh`` ¯\\_( ͡° ͜ʖ ͡°)_/¯ Please let me know if you have more success.
+
+Colors
+~~~~~~
+
+Color output is activated by default in compatible terminals. To deactivate colors, define the ``SLACK_CLI_NO_COLORS`` environment variable::
+
+    export SLACK_CLI_NO_COLORS=1
 
 Changelog
 =========
+
+v2.2.0 (2018-12-22)
+
+- Colorized output
 
 v2.1.2 (2018-12-21)
 
@@ -189,8 +200,8 @@ v2.1.1 (2018-12-20)
 v2.1.0 (2018-12-07)
 
 - Faster search/stream
-- Stream from all channels (`-s all`)
-- Send messages as a different user (`-u terminator`)
+- Stream from all channels (``-s all``)
+- Send messages as a different user (``-u terminator``)
 
 v2.0.2 (2017-09-13)
 
