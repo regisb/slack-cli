@@ -11,7 +11,7 @@ def read(*paths):
 
 setup(
     name="slack-cli",
-    version="2.2.1",
+    version="2.2.2",
     description="Slack CLI for productive developers",
     long_description=(read('README.rst')),
     url="https://github.com/regisb/slack-cli",
@@ -25,6 +25,7 @@ setup(
     author="Régis Behmo",
     author_email="nospam@behmo.com",
     packages=['slackcli'],
+    package_data={'slackcli': ['emoji.json']},
     entry_points={
         'console_scripts': [
             'slack-cli=slackcli.cli:main',
