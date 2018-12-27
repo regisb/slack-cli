@@ -75,14 +75,14 @@ def format_message(source_name, message):
     # Replace user ids by usernames in message text: "<@USLACKBOT>" -> "<@slackbot>"
     text = re.subn(
         r'\<@(?P<userid>[A-Z0-9]+)\>',
-        lambda match: '<@{}>'.format(names.get_username(match['userid'], match['userid'])),
+        lambda match: '<@{}>'.format(names.get_username(match.groupdict()['userid'], match.groupdict()['userid'])),
         text,
     )[0]
 
     # Replace channel id|name by name: "<#C02SNA1U4|general>" -> "<#general>"
     text = re.subn(
         r'\<#(?P<channelid>[A-Z0-9]+)\|(?P<channelname>[a-z0-9_-]+)\>',
-        lambda match: '<#{}>'.format(match['channelname']),
+        lambda match: '<#{}>'.format(match.groupdict()['channelname']),
         text,
     )[0]
 
