@@ -233,6 +233,7 @@ Changelog
 v2.2.2 (2019-01-16)
 
 - Properly identify bots
+- Properly print bot messages
 
 v2.2.1 (2018-12-22)
 

@@ -101,7 +101,26 @@ def format_message(source_name, message):
         ui.color(username),
         'bold'
     )
-    formatted += emoji.emojize(text)
+    if text:
+        formatted += emoji.emojize(text)
+
+    # Files
     for f in message.get('files', []):
         formatted += "\n    {}: {}".format(f['name'], ui.hyperlink(f['url_private']))
+
+    # Attachments (e.g: bot messages)
+    for attachment in message.get('attachments', []):
+        title = emoji.emojize(attachment.get('title', ''))
+        if title:
+            formatted += "\n    {}".format(ui.apply_effect(title, 'bold'))
+            title_link = attachment.get('title_link')
+            if title_link:
+                formatted += " " + ui.hyperlink(title_link)
+        text = emoji.emojize(attachment.get('title_link', ''))
+        fallback = emoji.emojize(attachment.get('fallback'))
+        if text:
+            formatted += "\n" + ui.indent(text)
+        if fallback:
+            formatted += "\n" + ui.indent(fallback)
+
     return formatted
