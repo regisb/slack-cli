@@ -230,7 +230,7 @@ Update emojis
 Changelog
 =========
 
-v2.2.2 (2019-01-16)
+v2.2.3 (2019-01-16)
 
 - Properly identify bots
 - Properly print bot messages
