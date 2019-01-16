@@ -230,6 +230,10 @@ Update emojis
 Changelog
 =========
 
+v2.2.2 (2019-01-16)
+
+- Properly identify bots
+
 v2.2.1 (2018-12-22)
 
 - Colorized output

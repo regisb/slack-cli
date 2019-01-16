@@ -21,18 +21,30 @@ class UserIndex(Singleton):
 
     def __init__(self):
         self.user_index = {}
+        self.bot_index = {}
 
-    def name(self, user_id):
+    def username(self, user_id):
         if user_id not in self.user_index:
             self.user_index[user_id] = slack.client().users.info(user_id).body['user']['name']
         return self.user_index[user_id]
+    
+    def botname(self, bot_id):
+        if bot_id not in self.bot_index:
+            self.bot_index[bot_id] = slack.client().bots.info(bot_id).body['bot']['name']
+        return self.bot_index[bot_id]
 
 
 def username(user_id):
     """
     Find the user name associated to a user ID.
     """
-    return UserIndex.instance().name(user_id)
+    return UserIndex.instance().username(user_id)
+
+def botname(user_id):
+    """
+    Find the bot name associated to a bot ID.
+    """
+    return UserIndex.instance().botname(user_id)
 
 def get_username(slack_id, default=None):
     """

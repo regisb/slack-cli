@@ -68,7 +68,11 @@ def format_message(source_name, message):
     # Some bots do not have a 'user' entry, but only a 'username'.
     # However, we prefer to rely on the 'username' entry if it is present, for
     # performance reasons.
-    username = message.get('username') or names.username(message['user'])
+    username = message.get('username')
+    if not username and 'user' in message:
+        username = names.username(message['user'])
+    if not username and 'bot_id' in message:
+        username = names.botname(message['bot_id'])
 
     text = message['text']
 
