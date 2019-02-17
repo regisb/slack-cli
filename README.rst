@@ -230,6 +230,10 @@ Update emojis
 Changelog
 =========
 
+v2.2.4 (2019-02-17)
+
+- Fix crash on receiving private group message
+
 v2.2.3 (2019-01-16)
 
 - Properly identify bots

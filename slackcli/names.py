@@ -27,7 +27,7 @@ class UserIndex(Singleton):
         if user_id not in self.user_index:
             self.user_index[user_id] = slack.client().users.info(user_id).body['user']['name']
         return self.user_index[user_id]
-    
+
     def botname(self, bot_id):
         if bot_id not in self.bot_index:
             self.bot_index[bot_id] = slack.client().bots.info(bot_id).body['bot']['name']
@@ -55,24 +55,38 @@ def get_username(slack_id, default=None):
     except slack.BaseError:
         return default
 
+
 class SourceIndex(Singleton):
-    """An index for storing channel/group names without making too many calls to the
-    API.
+    """
+    An index for storing channel/group names without making too many calls to
+    the API.
     """
 
     def __init__(self):
         self.source_index = {}
+        # TODO much of the time lost at boot comes from this loop. This could
+        # maybe be run later? If we had the conversations API we could retrieve
+        # user names at run time.
         for im in slack.client().im.list().body['ims']:
             self.source_index[im['id']] = username(im['user'])
 
     def name(self, source_id):
         if source_id not in self.source_index:
-            self.source_index[source_id] = slack.client().channels.info(source_id).body['channel']['name']
+            self.source_index[source_id] = self._get_source_name(source_id)
         return self.source_index[source_id]
 
+    @staticmethod
+    def _get_source_name(source_id):
+        if source_id.startswith("G"):
+            # We need to process groups and channels differently until slacker
+            # implements the `conversations` API.
+            # https://api.slack.com/methods/conversations.info
+            return slack.client().groups.info(source_id).body['group']['name']
+        return slack.client().channels.info(source_id).body['channel']['name']
 
-def sourcename(user_id):
+
+def sourcename(source_id):
     """
     Find the source name associated to a source ID.
     """
-    return SourceIndex.instance().name(user_id)
+    return SourceIndex.instance().name(source_id)
