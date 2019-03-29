@@ -1,17 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from codecs import open
 import os
 from setuptools import setup
 
 def read(*paths):
     """ read files """
-    with open(os.path.join(*paths), 'r') as filename:
+    with open(os.path.join(*paths), 'r', 'utf-8') as filename:
         return filename.read()
 
 setup(
     name="slack-cli",
-    version="2.2.4",
+    version="2.2.5",
     description="Slack CLI for productive developers",
     long_description=(read('README.rst')),
     url="https://github.com/regisb/slack-cli",
