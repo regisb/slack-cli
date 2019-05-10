@@ -38,7 +38,7 @@ Usage
     optional arguments:
       -h, --help            show this help message and exit
       -t TOKEN, --token TOKEN
-                            Explicitely specify Slack API token which will be
+                            Explicitly specify Slack API token which will be
                             saved to /home/user/.config/slack-cli/slack_token.
       -T TEAM, --team TEAM  Team domain to interact with. This is the name that
                             appears in the Slack url: https://xxx.slack.com. Use
