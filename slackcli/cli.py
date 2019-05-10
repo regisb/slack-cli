@@ -36,7 +36,7 @@ def run():
     parser = argparse.ArgumentParser(description="""Send, pipe, upload and
                                      receive Slack messages from the CLI""")
     parser.add_argument("-t", "--token",
-                        help="Explicitely specify Slack API token which will be saved to {}.".format(token.TOKEN_PATH))
+                        help="Explicitly specify Slack API token which will be saved to {}.".format(token.TOKEN_PATH))
     parser.add_argument("-T", "--team",
                         help="""Team domain to interact with. This is the name
                         that appears in the Slack url: https://xxx.slack.com.
