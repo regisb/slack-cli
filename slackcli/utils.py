@@ -76,6 +76,14 @@ def print_messages(source_name, count=20):
     for message in messages[::-1]:
         print(format_incoming_message(source_name, message))
 
+def format_outgoing_message(message):
+    message = message.strip()
+    usernames = re.search('@([^\s]+)', message)
+
+    if usernames:
+        message = re.sub(r'@([^\s]+)', names.get_user_id(r'<@1>'), message)
+
+    return message
 
 def format_incoming_message(source_name, message):
     time = datetime.fromtimestamp(float(message["ts"]))

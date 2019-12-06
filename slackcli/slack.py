@@ -6,6 +6,7 @@ import slacker
 
 from . import errors
 from . import token
+from . import utils
 
 __all__ = ["client", "init", "post_message"]
 
@@ -93,7 +94,7 @@ def post_message(destination_id, text, pre=False, username=None):
         if status_update_fields:
             update_status_fields(**status_update_fields)
             return
-    text = text.strip()
+    text = utils.format_outgoing_message(text)
     client().chat.post_message(
         destination_id, text, as_user=(not username), username=username,
     )

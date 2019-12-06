@@ -21,6 +21,7 @@ class UserIndex(Singleton):
 
     def __init__(self):
         self.user_index = {}
+        self.user_id_by_username_index = {}
         self.bot_index = {}
 
     def username(self, user_id):
@@ -29,6 +30,13 @@ class UserIndex(Singleton):
                 slack.client().users.info(user_id).body["user"]["name"]
             )
         return self.user_index[user_id]
+
+    def user_id(self, username):
+        if username not in self.user_id_by_username_index:
+            members = slack.client().users.list().body["members"]
+            for member in members:
+                self.user_id_by_username_index[member["name"]] = member["id"]
+        return self.user_id_by_username_index[username]
 
     def botname(self, bot_id):
         if bot_id not in self.bot_index:
@@ -43,6 +51,13 @@ def username(user_id):
     Find the user name associated to a user ID.
     """
     return UserIndex.instance().username(user_id)
+
+
+def user_id(username):
+    """
+    Find the user id associated to a username
+    """
+    return UserIndex.instance().user_id(username)
 
 
 def botname(user_id):
@@ -60,6 +75,16 @@ def get_username(slack_id, default=None):
         return username(slack_id)
     except slack.BaseError:
         return default
+
+
+def get_user_id(slack_name):
+    """
+    Same as `user_id` but does not raise.
+    """
+    try:
+        return user_id(slack_name)
+    except slack.BaseError:
+        return slack_name
 
 
 class SourceIndex(Singleton):
