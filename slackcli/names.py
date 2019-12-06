@@ -28,6 +28,14 @@ class UserIndex(Singleton):
             self.user_index[user_id] = slack.client().users.info(user_id).body['user']['name']
         return self.user_index[user_id]
 
+    def user_id(self, username):
+        members = slack.client().users.list().body['members']
+        member = [x for x in members if x['name'] == username][0]
+        if member:
+            return member['id']
+        else:
+            return None
+
     def botname(self, bot_id):
         if bot_id not in self.bot_index:
             self.bot_index[bot_id] = slack.client().bots.info(bot_id).body['bot']['name']
@@ -55,6 +63,8 @@ def get_username(slack_id, default=None):
     except slack.BaseError:
         return default
 
+def get_user_id(username):
+    return UserIndex.instance().user_id(username)
 
 class SourceIndex(Singleton):
     """

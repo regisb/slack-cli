@@ -2,6 +2,7 @@ import slacker
 
 from . import errors
 from . import token
+from . import utils
 
 __all__ = ['client', 'init', 'post_message']
 
@@ -62,7 +63,7 @@ def post_message(destination_id, text, pre=False, username=None):
         text = "```" + text + "```"
     text = text.strip()
     client().chat.post_message(
-        destination_id, text,
+        destination_id, utils.format_outgoing_message(text),
         as_user=(not username),
         username=username,
     )
