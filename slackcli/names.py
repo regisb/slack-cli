@@ -30,11 +30,10 @@ class UserIndex(Singleton):
 
     def user_id(self, username):
         members = slack.client().users.list().body['members']
-        member = [x for x in members if x['name'] == username][0]
-        if member:
-            return member['id']
-        else:
-            return None
+        for member in members:
+            if member['name'] == username:
+                return member['id']
+        return None
 
     def botname(self, bot_id):
         if bot_id not in self.bot_index:
