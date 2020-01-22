@@ -3,6 +3,11 @@
 
 ###### Development
 
+test: test-unit test-format
+
+test-unit:
+	python -m unittest discover tests
+
 test-format: ## Check formatting
 	black --check --diff .
 
