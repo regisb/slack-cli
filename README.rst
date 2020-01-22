@@ -2,12 +2,9 @@
 slack-cli
 =========
 
-Effectively interact with `Slack <https://slack.com/>`_ from the command line: send
-messages, upload files, send command output, pipe content... all from the confort
-of your terminal.
+Effectively interact with `Slack <https://slack.com/>`_ from the command line: send messages, upload files, send command output, pipe content... all from the confort of your terminal.
 
-Member of dozens of Slack teams? No worries, with ``slack-cli`` you can easily switch
-from one team to another.
+Member of dozens of Slack teams? No worries, with ``slack-cli`` you can easily switch from one team to another.
 
 .. image:: https://raw.githubusercontent.com/regisb/slack-cli/master/demo.png
 
@@ -20,8 +17,7 @@ Quickstart
     $ slack-cli -d general "Hello everyone!"
 
 
-You will be asked to provide a Slack API token. It's easy, just get one from the
-`API token generator <https://api.slack.com/custom-integrations/legacy-tokens>`_.
+You will be asked to provide a Slack API token. It's easy, just get one from the `API token generator <https://api.slack.com/custom-integrations/legacy-tokens>`_.
 
 Usage
 =====
@@ -83,8 +79,7 @@ Pipe content from stdin
 
     $ cat /etc/hosts | slack-cli -d devteam
 
-Usually you will want to format piped content as verbatim content with triple
-backticks ("\`\`\`"). This is achieved with the ``--pre`` option::
+Usually you will want to format piped content as verbatim content with triple backticks ("\`\`\`"). This is achieved with the ``--pre`` option::
 
     $ tail -f /var/log/nginx/access.log | slack-cli -d devteam --pre
 
@@ -98,8 +93,7 @@ Upload file
 Run command and send output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is really convenient for showing both the result of a command and the
-command itself::
+This is really convenient for showing both the result of a command and the command itself::
 
     $ slack-cli -d john --run "git log -1"
 
@@ -151,8 +145,7 @@ The new team will become the new default team.
 Token management
 ~~~~~~~~~~~~~~~~
 
-Note that the Slack token may optionally be stored in an environment variable (although it
-is not recommended `for security reasons <https://unix.stackexchange.com/questions/369566/why-is-passing-the-secrets-via-environmental-variables-considered-extremely-ins>`_)::
+Note that the Slack token may optionally be stored in an environment variable (although it is not recommended `for security reasons <https://unix.stackexchange.com/questions/369566/why-is-passing-the-secrets-via-environmental-variables-considered-extremely-ins>`_)::
 
     $ export SLACK_TOKEN="slack_token_string"
 
@@ -203,15 +196,13 @@ Development
 Contributions
 ~~~~~~~~~~~~~
 
-I am very much open to comments! Please don't be afraid to `raise issues
-<https://github.com/regisb/slack-cli/issues>`_ or `open pull requests
-<https://github.com/regisb/slack-cli/pulls>`_.
+I am very much open to comments! Please don't be afraid to `raise issues <https://github.com/regisb/slack-cli/issues>`_ or `open pull requests <https://github.com/regisb/slack-cli/pulls>`_.
 
-This work is licensed under the terms of the `MIT License
-<https://tldrlegal.com/license/mit-license>`_
+Note that code is auto-formatted by `black <https://black.readthedocs.io/en/stable/>`__. Run ``make test-format`` and ``make format`` prior to commit.
 
-Note that this project was initially a fork of `slacker-cli <https://github.com/juanpabloaj/slacker-cli/>`_
-but the two projects have now considerably diverged.
+This work is licensed under the terms of the `MIT License <https://tldrlegal.com/license/mit-license>`_
+
+Note that this project was initially a fork of `slacker-cli <https://github.com/juanpabloaj/slacker-cli/>`_ but the two projects have now considerably diverged.
 
 Tests
 ~~~~~
