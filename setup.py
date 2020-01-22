@@ -29,10 +29,9 @@ setup(
     author_email="nospam@behmo.com",
     packages=["slackcli"],
     package_data={"slackcli": ["emoji.json"]},
-    entry_points={"console_scripts": ["slack-cli=slackcli.cli:main",],},
+    entry_points={"console_scripts": ["slack-cli=slackcli.cli:main"]},
     classifiers=[
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
