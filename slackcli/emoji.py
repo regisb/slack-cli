@@ -3,11 +3,12 @@ import json
 import os
 
 
-USE_EMOJIS = 'SLACK_CLI_NO_EMOJI' not in os.environ
+USE_EMOJIS = "SLACK_CLI_NO_EMOJI" not in os.environ
+
 
 class Emojis:
     ALL = {}
-    JSON_PATH = os.path.join(os.path.dirname(__file__), 'emoji.json')
+    JSON_PATH = os.path.join(os.path.dirname(__file__), "emoji.json")
     URL = "https://raw.githubusercontent.com/iamcal/emoji-data/master/emoji.json"
 
     @classmethod
@@ -37,11 +38,11 @@ class Emojis:
         emojis = json.loads(urllib.request.urlopen(cls.URL).read())
         emoji_names = {}
         for emoji in emojis:
-            utf8 = unified_to_unicode(emoji['unified'])
-            for name in emoji['short_names']:
+            utf8 = unified_to_unicode(emoji["unified"])
+            for name in emoji["short_names"]:
                 emoji_names[name] = utf8
 
-        with open(cls.JSON_PATH, 'w') as f:
+        with open(cls.JSON_PATH, "w") as f:
             json.dump(emoji_names, f, sort_keys=True, indent=2)
 
 
@@ -54,20 +55,20 @@ def emojize(text):
         return text
 
     pos = 0
-    result = ''
+    result = ""
     verbatim = False
     verbatim_block = False
     while pos < len(text):
         chunk = text[pos]
-        if text[pos] == '`':
-            if text[pos+1:pos+3] == '``':
+        if text[pos] == "`":
+            if text[pos + 1 : pos + 3] == "``":
                 verbatim_block = not verbatim_block
             if not verbatim_block:
                 verbatim = not verbatim
-        if text[pos] == ':' and not verbatim and not verbatim_block:
-            end_pos = text.find(':', pos+1)
+        if text[pos] == ":" and not verbatim and not verbatim_block:
+            end_pos = text.find(":", pos + 1)
             if end_pos > pos + 1:
-                emoji = Emojis.get(text[pos+1:end_pos])
+                emoji = Emojis.get(text[pos + 1 : end_pos])
                 if emoji:
                     chunk = emoji
                     pos = end_pos
@@ -75,17 +76,18 @@ def emojize(text):
         pos += 1
     return result
 
+
 def unified_to_unicode(unified):
     """
     Convert unified codes to unicode, such as "0023-FE0F-20E3" to #️⃣.
     """
-    binary = b''
-    for part in unified.split('-'):
+    binary = b""
+    for part in unified.split("-"):
         if len(part) == 4:
-            prefix = b'\u'
+            prefix = b"\u"
         elif len(part) == 5:
-            prefix = b'\U000'
+            prefix = b"\U000"
         else:
             raise ValueError("ERROR:" + unified)
         binary += prefix + part.encode()
-    return binary.decode('unicode_escape')
+    return binary.decode("unicode_escape")

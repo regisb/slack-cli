@@ -1,7 +1,7 @@
 from . import slack
 
 
-__all__ = ['username', 'sourcename']
+__all__ = ["username", "sourcename"]
 
 
 class Singleton(object):
@@ -25,12 +25,16 @@ class UserIndex(Singleton):
 
     def username(self, user_id):
         if user_id not in self.user_index:
-            self.user_index[user_id] = slack.client().users.info(user_id).body['user']['name']
+            self.user_index[user_id] = (
+                slack.client().users.info(user_id).body["user"]["name"]
+            )
         return self.user_index[user_id]
 
     def botname(self, bot_id):
         if bot_id not in self.bot_index:
-            self.bot_index[bot_id] = slack.client().bots.info(bot_id).body['bot']['name']
+            self.bot_index[bot_id] = (
+                slack.client().bots.info(bot_id).body["bot"]["name"]
+            )
         return self.bot_index[bot_id]
 
 
@@ -40,11 +44,13 @@ def username(user_id):
     """
     return UserIndex.instance().username(user_id)
 
+
 def botname(user_id):
     """
     Find the bot name associated to a bot ID.
     """
     return UserIndex.instance().botname(user_id)
+
 
 def get_username(slack_id, default=None):
     """
@@ -67,8 +73,8 @@ class SourceIndex(Singleton):
         # TODO much of the time lost at boot comes from this loop. This could
         # maybe be run later? If we had the conversations API we could retrieve
         # user names at run time.
-        for im in slack.client().im.list().body['ims']:
-            self.source_index[im['id']] = username(im['user'])
+        for im in slack.client().im.list().body["ims"]:
+            self.source_index[im["id"]] = username(im["user"])
 
     def name(self, source_id):
         if source_id not in self.source_index:
@@ -81,8 +87,8 @@ class SourceIndex(Singleton):
             # We need to process groups and channels differently until slacker
             # implements the `conversations` API.
             # https://api.slack.com/methods/conversations.info
-            return slack.client().groups.info(source_id).body['group']['name']
-        return slack.client().channels.info(source_id).body['channel']['name']
+            return slack.client().groups.info(source_id).body["group"]["name"]
+        return slack.client().channels.info(source_id).body["channel"]["name"]
 
 
 def sourcename(source_id):

@@ -5,7 +5,7 @@ import sys
 
 import appdirs
 
-if sys.version[0] == '2':
+if sys.version[0] == "2":
     # pylint: disable=undefined-variable
     ask_user = raw_input
 else:
@@ -17,7 +17,7 @@ TEAMS_PATH = os.path.join(appdirs.user_config_dir("slack-cli"), "teams.json")
 
 def load(team=None):
     # Read from environment variable
-    token = os.environ.get('SLACK_TOKEN')
+    token = os.environ.get("SLACK_TOKEN")
     if token:
         return token
 
@@ -39,6 +39,7 @@ def load(team=None):
         except IOError:
             pass
 
+
 def ask(team=None):
     token = None
     while not token:
@@ -56,15 +57,18 @@ Your Slack API token{}: """.format(
         token = ask_user(message).strip()
     return token
 
+
 def save(token, team):
     save_default(token)
     save_team(token, team)
+
 
 def save_default(token):
     ensure_directory_exists(TOKEN_PATH)
     with open(TOKEN_PATH, "w") as slack_token_file:
         slack_token_file.write(token)
     os.chmod(TOKEN_PATH, stat.S_IREAD | stat.S_IWRITE)
+
 
 def save_team(token, team):
     ensure_directory_exists(TOKEN_PATH)
@@ -73,9 +77,10 @@ def save_team(token, team):
         with open(TEAMS_PATH) as teams_file:
             teams = json.load(teams_file)
     teams[team] = {"token": token}
-    with open(TEAMS_PATH, 'w') as teams_file:
+    with open(TEAMS_PATH, "w") as teams_file:
         json.dump(teams, teams_file, sort_keys=True, indent=4)
     os.chmod(TEAMS_PATH, stat.S_IREAD | stat.S_IWRITE)
+
 
 def ensure_directory_exists(path):
     directory = os.path.dirname(path)
