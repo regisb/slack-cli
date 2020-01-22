@@ -9,8 +9,19 @@ __all__ = ["client", "init", "post_message"]
 BaseError = slacker.Error
 
 
-class Slacker(object):
+class Slacker(slacker.Slacker):
     INSTANCE = None
+
+    @classmethod
+    def create_instance(cls, user_token):
+        cls.INSTANCE = cls(user_token)
+
+    @classmethod
+    def instance(cls):
+        if cls.INSTANCE is None:
+            # This is not supposed to happen
+            raise ValueError("Slacker client token was not undefined")
+        return cls.INSTANCE
 
 
 def init(user_token=None, team=None):
@@ -58,10 +69,7 @@ def save_token(user_token, team=None):
 
 
 def client():
-    if Slacker.INSTANCE is None:
-        # This is not supposed to happen
-        raise ValueError("Slacker client token was not undefined")
-    return Slacker.INSTANCE
+    return Slacker.instance()
 
 
 def post_message(destination_id, text, pre=False, username=None):
