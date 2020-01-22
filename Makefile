@@ -1,5 +1,4 @@
 .DEFAULT_GOAL := help
-.PHONY: build
 
 ###### Development
 
@@ -19,7 +18,7 @@ format: ## Format all code
 package: ## Build source distribution package
 	python setup.py sdist
 
-pypi: build ## Upload package to pypi
+pypi: package ## Upload package to pypi
 	twine upload --skip-existing dist/slack-cli-*.tar.gz
 
 ###### Additional commands
