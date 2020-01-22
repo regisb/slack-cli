@@ -72,6 +72,14 @@ Send message with a different username::
 
     $ slack-cli -d general -u terminator "I'll be back"
 
+Update status
+-------------
+
+::
+
+    $ slack-cli -d general "/status :office: In the office"
+    $ slack-cli -d general "/status :house: At home"
+
 Pipe content from stdin
 ~~~~~~~~~~~~~~~~~~~~~~~
 

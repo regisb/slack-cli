@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.2.6 (2020-01-22)
+
+- Support status updates
+
 ## v2.2.4 (2019-02-17)
 
 - Fix crash on receiving private group message

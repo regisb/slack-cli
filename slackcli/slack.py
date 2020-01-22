@@ -1,3 +1,6 @@
+import json
+import re
+
 import slacker
 
 from . import errors
@@ -75,7 +78,27 @@ def client():
 def post_message(destination_id, text, pre=False, username=None):
     if pre:
         text = "```" + text + "```"
+    else:
+        status_update_fields = parse_status_update(text)
+        if status_update_fields:
+            update_status_fields(**status_update_fields)
+            return
     text = text.strip()
     client().chat.post_message(
         destination_id, text, as_user=(not username), username=username,
     )
+
+
+def parse_status_update(text):
+    """
+    Parse "/status :emoji: sometext" messages. If there is a match, return a dict
+    containing the profile attributes to be updated. Else return None.
+    """
+    status_update_match = re.match(
+        r"^/status (?P<status_emoji>:[^ :]+:) +(?P<status_text>.+)$", text
+    )
+    return None if status_update_match is None else status_update_match.groupdict()
+
+
+def update_status_fields(**profile):
+    client().users.profile.set(profile=json.dumps(profile))
