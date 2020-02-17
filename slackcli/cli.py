@@ -2,6 +2,7 @@
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
+import json
 import subprocess
 import sys
 
@@ -82,6 +83,10 @@ def run():
 
     group_receive = parser.add_argument_group("Receive messages")
     group_receive.add_argument(
+        '--json',
+        action='store_true',
+        help='Output messages in JSON format.')
+    group_receive.add_argument(
         "-s",
         "--src",
         action="append",
@@ -114,12 +119,12 @@ def run():
 
     # Stream content
     if args.src and args.last is None:
-        stream.receive(args.src)
+        stream.receive(args.src, args.json)
         return 0
 
     # Print last messages
     if args.src and args.last is not None:
-        last_messages(args.src, args.last)
+        last_messages(args.src, args.last, args.json)
         return 0
 
     ### Send messages
@@ -162,9 +167,13 @@ def args_error_message(args):
 ######### Receive
 
 
-def last_messages(sources, count):
+def last_messages(sources, count, json_format):
     for source in sources:
-        utils.print_messages(source, count=count)
+        for message in utils.get_messages(source, count=count):
+            if json_format:
+                print(json.dumps(message))
+            else:
+                print(utils.format_message(message))
 
 
 ######### Send

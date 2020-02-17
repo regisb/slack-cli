@@ -6,9 +6,13 @@ from . import slack
 from . import utils
 
 
-def receive(sources):
+def receive(sources, json_format):
     try:
-        loop(sources)
+        for message in loop(sources):
+            if json_format:
+                print(json.dumps(message))
+            else:
+                print(utils.format_message(message))
     except KeyboardInterrupt:
         pass
 
@@ -28,10 +32,10 @@ def loop(sources):
             continue
         if data["type"] == "hello":
             continue
-        if data["type"] == "message" and "subtype" not in data:
+        if data["type"] == "message" and "subtype" not in message:
             source_name = names.sourcename(data["channel"])
             if source_name not in sources and "all" not in sources:
                 # The streaming API provides all messages in all channels, so
                 # we need to do some filtering here
                 continue
-            print(utils.format_message(source_name, data))
+            yield utils.decorate_message(data)

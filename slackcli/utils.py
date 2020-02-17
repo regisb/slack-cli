@@ -38,8 +38,7 @@ def iter_resources():
 def upload_file(path, destination_id):
     return slack.client().files.upload(path, channels=destination_id)
 
-
-def print_messages(source_name, count=20):
+def get_messages(source_name, count=20):
     resource_type, resource = get_resource(source_name)
     # channel->channels, group->groups, but im->im :-(
     method_name = resource_type + "s"
@@ -54,28 +53,25 @@ def print_messages(source_name, count=20):
 
     history = getattr(slack.client(), method_name).history
 
-    messages = []
     latest = None
-    while len(messages) < count:
+    for index in range(count):
         response_body = history(
             resource["id"],
-            count=min(count - len(messages), 1000),
+            count=min(count - index, 1000),
             latest=latest,
             inclusive=False,
         ).body
         # Note that in the response, messages are sorted by *descending* date
         # (most recent first)
-        messages += response_body["messages"]
+        for message in response_body["messages"]:
+            yield decorate_message(source_name, message)
+
+        latest = message["ts"]
+
         if not response_body["has_more"]:
             break
-        latest = messages[-1]["ts"]
 
-    # Print the last count messages, from last to first
-    for message in messages[::-1]:
-        print(format_message(source_name, message))
-
-
-def format_message(source_name, message):
+def decorate_message(source_name, message):
     time = datetime.fromtimestamp(float(message["ts"]))
     # Some bots do not have a 'user' entry, but only a 'username'.
     # However, we prefer to rely on the 'username' entry if it is present, for
@@ -103,7 +99,11 @@ def format_message(source_name, message):
         lambda match: "<#{}>".format(match.groupdict()["channelname"]),
         text,
     )[0]
+    return dict(message, text=text, source_name=source_name, full_username=username)
 
+def format_message(message):
+    username = message['full_username']
+    source_name = message['source_name']
     formatted = ui.colorize(
         "[@{} {}] ".format(source_name, time.strftime("%Y-%m-%d %H:%M:%S"),),
         ui.color(source_name),
