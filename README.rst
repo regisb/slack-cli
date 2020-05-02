@@ -17,7 +17,7 @@ Quickstart
     $ slack-cli -d general "Hello everyone!"
 
 
-You will be asked to provide a Slack API token. It's easy, just get one from the `API token generator <https://api.slack.com/custom-integrations/legacy-tokens>`_.
+You will be asked to provide a Slack API token. It's easy, just refer to the `docs here <docs/SLACK_APP.md>`_.
 
 Usage
 =====
@@ -113,9 +113,9 @@ will send to user ``john``::
     Date:   Thu Jun 22 15:20:36 2017 +0200
 
         Replace all commands by a single command
-        
+
         Our first 1.0 release!
-    
+
 Receiving messages
 ------------------
 
@@ -172,7 +172,7 @@ Then, try autocompletion with::
     $ slack -s gene<tab>
 
 or::
-    
+
     $ slack -d <tab><tab>
 
 Unfortunately, I did not manage to get autocompletion to work with ``zsh`` ¯\\_( ͡° ͜ʖ ͡°)_/¯ Please let me know if you have more success.
