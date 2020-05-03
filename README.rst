@@ -205,18 +205,18 @@ To generate a token, create a `new Slack App <https://api.slack.com/apps/new>`__
 
 Grant API Permissions to your App, select all that apply (you probably want "chat:write"):
 
-.. figure:: docs/permissions.gif
+.. figure:: https://raw.githubusercontent.com/regisb/slack-cli/master/docs/permissions.gif
    :alt: Create App and add OAuth Scopes
 
 
 This is an example of how it could look like:
 
-.. figure:: docs/scope_example.png
+.. figure:: https://raw.githubusercontent.com/regisb/slack-cli/master/docs/scope_example.png
    :alt: Example scopes
 
 Now hit the green ``Install App to workspace`` button, and you will be presented with a token you can use for authentication.
 
-.. figure:: docs/token.png
+.. figure:: https://raw.githubusercontent.com/regisb/slack-cli/master/docs/token.png
    :alt: OAuth Access Token
 
 
