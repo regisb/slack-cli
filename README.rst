@@ -201,22 +201,22 @@ If emojis are not your thing, you can disable them globally with the ``SLACK_CLI
 Tokens
 ~~~~~~
 
-To generate a token, create a `new Slack App <https://api.slack.com/apps/new>`__, and add it to your workspace.
+To generate a token, create a `new Slack App <https://api.slack.com/apps/new>`__ and add it to your workspace.
 
-Grant API Permissions to your App, select all that apply:
+Grant API Permissions to your App, select all that apply (you probably want "chat:write"):
 
-.. figure:: permissions.gif
+.. figure:: docs/permissions.gif
    :alt: Create App and add OAuth Scopes
 
 
 This is an example of how it could look like:
 
-.. figure:: scope_example.png
+.. figure:: docs/scope_example.png
    :alt: Example scopes
 
 Now hit the green ``Install App to workspace`` button, and you will be presented with a token you can use for authentication.
 
-.. figure:: token.png
+.. figure:: docs/token.png
    :alt: OAuth Access Token
 
 
