@@ -214,9 +214,7 @@ This is an example of how it could look like:
 .. figure:: scope_example.png
    :alt: Example scopes
 
-Now hit the green ``Install App to workspace`` button, and you will be
-
-presented with a token you can use for authentication.
+Now hit the green ``Install App to workspace`` button, and you will be presented with a token you can use for authentication.
 
 .. figure:: token.png
    :alt: OAuth Access Token
