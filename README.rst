@@ -79,6 +79,8 @@ Update status
 
     $ slack-cli -d general "/status :office: In the office"
     $ slack-cli -d general "/status :house: At home"
+    $ slack-cli -d general "/status Just chillin'"
+    $ slack-cli -d general "/status clear"
 
 Pipe content from stdin
 ~~~~~~~~~~~~~~~~~~~~~~~
