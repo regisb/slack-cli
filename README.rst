@@ -6,7 +6,7 @@ Effectively interact with `Slack <https://slack.com/>`_ from the command line: s
 
 Member of dozens of Slack teams? No worries, with ``slack-cli`` you can easily switch from one team to another.
 
-.. image:: https://raw.githubusercontent.com/regisb/slack-cli/master/demo.png
+.. image:: demo.png
 
 Quickstart
 ==========
