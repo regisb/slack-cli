@@ -17,7 +17,7 @@ Quickstart
     $ slack-cli -d general "Hello everyone!"
 
 
-You will be asked to provide a Slack API token. It's easy, just refer to the `docs here <docs/SLACK_APP.md>`_.
+You will be asked to provide a Slack API token. It's easy, check out the `Tokens`_ section for a quickstart.
 
 Usage
 =====
@@ -197,6 +197,30 @@ Emoji short codes will be automatically replaced by their corresponding unicode 
 If emojis are not your thing, you can disable them globally with the ``SLACK_CLI_NO_EMOJI`` environment variable::
 
     export SLACK_CLI_NO_EMOJI=1
+
+Tokens
+~~~~~~
+
+To generate a token, create a `new Slack App <https://api.slack.com/apps/new>`__, and add it to your workspace.
+
+Grant API Permissions to your App, select all that apply:
+
+.. figure:: permissions.gif
+   :alt: Create App and add OAuth Scopes
+
+
+This is an example of how it could look like:
+
+.. figure:: scope_example.png
+   :alt: Example scopes
+
+Now hit the green ``Install App to workspace`` button, and you will be
+
+presented with a token you can use for authentication.
+
+.. figure:: token.png
+   :alt: OAuth Access Token
+
 
 Development
 -----------
