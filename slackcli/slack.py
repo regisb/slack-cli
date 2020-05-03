@@ -95,9 +95,19 @@ def parse_status_update(text):
     containing the profile attributes to be updated. Else return None.
     """
     status_update_match = re.match(
-        r"^/status (?P<status_emoji>:[^ :]+:) +(?P<status_text>.+)$", text
+        r"^/status( +(?P<status_emoji>:[^ :]+:))?( +(?P<status_text>[^:].*))?$", text
     )
-    return None if status_update_match is None else status_update_match.groupdict()
+    if status_update_match is None:
+        return None
+    status = status_update_match.groupdict()
+    if status["status_emoji"] is None:
+        if status["status_text"] is None:
+            return None
+        if status["status_text"] == "clear":
+            status["status_text"] = ""
+        else:
+            status["status_emoji"] = ":speech_balloon:"
+    return status
 
 
 def update_status_fields(**profile):

@@ -1,5 +1,9 @@
 # Changelog
 
+# Unreleased
+
+- Support `/status clear` and extended status updates.
+
 ## v2.2.6 (2020-01-22)
 
 - Support status updates
