@@ -34,4 +34,4 @@ def loop(sources):
                 # The streaming API provides all messages in all channels, so
                 # we need to do some filtering here
                 continue
-            print(utils.format_message(source_name, data))
+            print(utils.format_incoming_message(source_name, data))

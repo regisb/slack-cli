@@ -74,10 +74,10 @@ def print_messages(source_name, count=20):
 
     # Print the last count messages, from last to first
     for message in messages[::-1]:
-        print(format_message(source_name, message))
+        print(format_incoming_message(source_name, message))
 
 
-def format_message(source_name, message):
+def format_incoming_message(source_name, message):
     time = datetime.fromtimestamp(float(message["ts"]))
     # Some bots do not have a 'user' entry, but only a 'username'.
     # However, we prefer to rely on the 'username' entry if it is present, for
