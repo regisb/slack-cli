@@ -173,19 +173,19 @@ def pipe(destination, pre=False, username=None):
     for line in sys.stdin:
         line = line.strip()
         if line:
-            slack.post_message(destination_id, line, pre=pre, username=username)
+            utils.post_message(destination_id, line, pre=pre, username=username)
 
 
 def run_command(destination, command, username=None):
     destination_id = utils.get_destination_id(destination)
     command_result = subprocess.check_output(command, shell=True)
     message = "$ " + command + "\n" + command_result.decode("utf-8")
-    slack.post_message(destination_id, message, pre=True, username=username)
+    utils.post_message(destination_id, message, pre=True, username=username)
 
 
 def send_message(destination, message, pre=False, username=None):
     destination_id = utils.get_destination_id(destination)
-    slack.post_message(destination_id, message, pre=pre, username=username)
+    utils.post_message(destination_id, message, pre=pre, username=username)
 
 
 def upload_file(destination, path):

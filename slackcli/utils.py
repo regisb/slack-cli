@@ -76,14 +76,55 @@ def print_messages(source_name, count=20):
     for message in messages[::-1]:
         print(format_incoming_message(source_name, message))
 
+
+def post_message(destination_id, text, pre=False, username=None):
+    if pre:
+        text = "```" + text + "```"
+    else:
+        status_update_fields = parse_status_update(text)
+        if status_update_fields:
+            slack.update_status_fields(**status_update_fields)
+            return
+    text = format_outgoing_message(text)
+    slack.client().chat.post_message(
+        destination_id, text, as_user=(not username), username=username,
+    )
+
+
+def parse_status_update(text):
+    """
+    Parse "/status :emoji: sometext" messages. If there is a match, return a dict
+    containing the profile attributes to be updated. Else return None.
+    """
+    status_update_match = re.match(
+        r"^/status( +(?P<status_emoji>:[^ :]+:))?( +(?P<status_text>[^:].*))?$", text
+    )
+    if status_update_match is None:
+        return None
+    status = status_update_match.groupdict()
+    if status["status_emoji"] is None:
+        if status["status_text"] is None:
+            return None
+        if status["status_text"] == "clear":
+            status["status_text"] = ""
+        else:
+            status["status_emoji"] = ":speech_balloon:"
+    return status
+
+
 def format_outgoing_message(message):
     message = message.strip()
-    usernames = re.search('@([^\s]+)', message)
 
-    if usernames:
-        message = re.sub(r'@([^\s]+)', names.get_user_id(r'<@1>'), message)
+    def replace_username(match):
+        username = match.groupdict()["username"]
+        user_id = names.get_user_id(username)
+        if user_id:
+            return "<@{}>".format(user_id)
+        return "@{}".format(username)
 
+    message, _ = re.subn(r"@(?P<username>[^ :]+)", replace_username, message)
     return message
+
 
 def format_incoming_message(source_name, message):
     time = datetime.fromtimestamp(float(message["ts"]))

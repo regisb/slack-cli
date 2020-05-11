@@ -8,7 +8,7 @@ from . import errors
 from . import token
 from . import utils
 
-__all__ = ["client", "init", "post_message"]
+__all__ = ["client", "init"]
 
 
 BaseError = slacker.Error
@@ -84,41 +84,6 @@ def save_token(user_token, team=None):
 
 def client():
     return Slacker.instance()
-
-
-def post_message(destination_id, text, pre=False, username=None):
-    if pre:
-        text = "```" + text + "```"
-    else:
-        status_update_fields = parse_status_update(text)
-        if status_update_fields:
-            update_status_fields(**status_update_fields)
-            return
-    text = utils.format_outgoing_message(text)
-    client().chat.post_message(
-        destination_id, text, as_user=(not username), username=username,
-    )
-
-
-def parse_status_update(text):
-    """
-    Parse "/status :emoji: sometext" messages. If there is a match, return a dict
-    containing the profile attributes to be updated. Else return None.
-    """
-    status_update_match = re.match(
-        r"^/status( +(?P<status_emoji>:[^ :]+:))?( +(?P<status_text>[^:].*))?$", text
-    )
-    if status_update_match is None:
-        return None
-    status = status_update_match.groupdict()
-    if status["status_emoji"] is None:
-        if status["status_text"] is None:
-            return None
-        if status["status_text"] == "clear":
-            status["status_text"] = ""
-        else:
-            status["status_emoji"] = ":speech_balloon:"
-    return status
 
 
 def update_status_fields(**profile):

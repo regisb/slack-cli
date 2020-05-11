@@ -16,27 +16,33 @@ class Singleton(object):
 
 
 class UserIndex(Singleton):
-    """An index for storing user names without making too many calls to the
-    API."""
+    """An index for storing user names without making too many calls to the API."""
 
     def __init__(self):
-        self.user_index = {}
-        self.user_id_by_username_index = {}
+        # user id -> user name
+        self.user_id_index = {}
+        # user name -> user id
+        self.user_name_index = {}
         self.bot_index = {}
 
     def username(self, user_id):
-        if user_id not in self.user_index:
-            self.user_index[user_id] = (
+        if user_id not in self.user_id_index:
+            self.user_id_index[user_id] = (
                 slack.client().users.info(user_id).body["user"]["name"]
             )
-        return self.user_index[user_id]
+        return self.user_id_index[user_id]
 
     def user_id(self, username):
-        if username not in self.user_id_by_username_index:
+        """
+        Fetch the user ID from the user name. Note that this is really slow, as we need
+        to parse the entire list of user IDs. Unfortunately it is not possible to fetch
+        a user by its username. Ideally, we should cache this list.
+        """
+        if not self.user_name_index:
             members = slack.client().users.list().body["members"]
             for member in members:
-                self.user_id_by_username_index[member["name"]] = member["id"]
-        return self.user_id_by_username_index[username]
+                self.user_name_index[member["name"]] = member["id"]
+        return self.user_name_index[username.lower()]
 
     def botname(self, bot_id):
         if bot_id not in self.bot_index:
@@ -77,14 +83,14 @@ def get_username(slack_id, default=None):
         return default
 
 
-def get_user_id(slack_name):
+def get_user_id(slack_name, default=None):
     """
     Same as `user_id` but does not raise.
     """
     try:
         return user_id(slack_name)
-    except slack.BaseError:
-        return slack_name
+    except KeyError:
+        return default
 
 
 class SourceIndex(Singleton):

@@ -2,7 +2,10 @@
 
 ###### Development
 
-test: test-unit test-format
+test: test-lint test-unit test-format
+
+test-lint: ## Run code linting tests
+	pylint --errors-only --ignore=templates ./slackcli ./tests
 
 test-unit:
 	python -m unittest discover tests
@@ -11,7 +14,7 @@ test-format: ## Check formatting
 	black --check --diff .
 
 format: ## Format all code
-	black .
+	black ./slackcli ./tests
 
 ###### Packaging
 

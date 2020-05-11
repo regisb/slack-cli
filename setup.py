@@ -24,6 +24,7 @@ setup(
         "slacker<0.12.0",
         "websocket-client<0.55.0",
     ],
+    extras_require={"development": ["black", "pylint"]},
     license="MIT",
     author="Régis Behmo",
     author_email="nospam@behmo.com",

@@ -238,8 +238,6 @@ Contributions
 
 I am very much open to comments! Please don't be afraid to `raise issues <https://github.com/regisb/slack-cli/issues>`_ or `open pull requests <https://github.com/regisb/slack-cli/pulls>`_.
 
-Note that code is auto-formatted by `black <https://black.readthedocs.io/en/stable/>`__. Run ``make test-format`` and ``make format`` prior to commit.
-
 This work is licensed under the terms of the `MIT License <https://tldrlegal.com/license/mit-license>`_
 
 Note that this project was initially a fork of `slacker-cli <https://github.com/juanpabloaj/slacker-cli/>`_ but the two projects have now considerably diverged.
@@ -247,9 +245,17 @@ Note that this project was initially a fork of `slacker-cli <https://github.com/
 Tests
 ~~~~~
 
-Run unit tests::
+Install the development requirements::
+    
+    pip install -e .[development]
 
-    python -m unittest discover tests
+Run all tests::
+    
+    make test
+
+Format your code with `black <https://black.readthedocs.io/en/stable/>`__::
+
+    make format
 
 Update emojis
 ~~~~~~~~~~~~~
