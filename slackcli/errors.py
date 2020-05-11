@@ -1,6 +1,6 @@
-class SourceDoesNotExistError(Exception):
+class SlackCliError(Exception):
     pass
 
 
-class InvalidSlackToken(Exception):
+class ConfigSaveError(SlackCliError):
     pass

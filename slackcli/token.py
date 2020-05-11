@@ -5,14 +5,19 @@ import sys
 
 import appdirs
 
+from . import errors
+
 if sys.version[0] == "2":
     # pylint: disable=undefined-variable
     ask_user = raw_input
 else:
     ask_user = input
 
-TOKEN_PATH = os.path.join(appdirs.user_config_dir("slack-cli"), "slack_token")
-TEAMS_PATH = os.path.join(appdirs.user_config_dir("slack-cli"), "teams.json")
+CONFIG_ROOT = os.environ.get(
+    "SLACK_CLI_CONFIG_ROOT", appdirs.user_config_dir("slack-cli")
+)
+TOKEN_PATH = os.path.join(CONFIG_ROOT, "slack_token")
+TEAMS_PATH = os.path.join(CONFIG_ROOT, "teams.json")
 
 
 def load(team=None):
@@ -85,4 +90,12 @@ def save_team(token, team):
 def ensure_directory_exists(path):
     directory = os.path.dirname(path)
     if not os.path.exists(directory):
-        os.makedirs(directory)
+        try:
+            os.makedirs(directory)
+        except PermissionError:
+            message = (
+                "Permission denied creating directory: {}. Check that you have the"
+                " right permissions to continue. The configuration directory may be"
+                " modified by setting the SLACK_CLI_CONFIG_ROOT environment variable"
+            ).format(directory)
+            raise errors.ConfigSaveError(message)

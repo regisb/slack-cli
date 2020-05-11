@@ -17,7 +17,9 @@ def get_resource(name):
     for resource_type, resource in iter_resources():
         if resource["name"] == name:
             return resource_type, resource
-    raise errors.SourceDoesNotExistError(name)
+    raise errors.SlackCliError(
+        "Channel, group or user '{}' does not exist".format(name)
+    )
 
 
 def iter_resources():

@@ -1,5 +1,6 @@
 import json
 import re
+import sys
 
 import slacker
 
@@ -54,7 +55,7 @@ def save_token(user_token, team=None):
     try:
         client().api.test()
     except slacker.Error:
-        raise errors.InvalidSlackToken(user_token)
+        raise errors.SlackCliError("Invalid Slack token: '{}'".format(user_token))
 
     # Get team
     try:
@@ -64,11 +65,20 @@ def save_token(user_token, team=None):
         if e.args[0] == "missing_scope":
             message = (
                 "Missing scope on token {}. This token requires the 'dnd:info' scope."
-            )
-        raise errors.InvalidSlackToken(message)
+            ).format(user_token)
+        raise errors.SlackCliError(message)
 
     # Save token
-    token.save(user_token, team)
+    try:
+        token.save(user_token, team)
+    except errors.ConfigSaveError as e:
+        sys.stderr.write("❌ ")
+        sys.stderr.write(e.args[0])
+        sys.stderr.write("\n")
+        sys.stderr.write(
+            "⚠️ Could not save token to disk. You will have to configure the Slack"
+            " token again next time you run slack-cli.\n"
+        )
 
 
 def client():

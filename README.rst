@@ -159,6 +159,14 @@ Note that the Slack token may optionally be stored in an environment variable (a
 
     $ export SLACK_TOKEN="slack_token_string"
 
+The ``slack-cli`` configuration is stored in a generic configuration directory -- by default, this is ~/.config/slack-cli on Linux. You can check the path of this directory by running::
+
+    python3 -c "from slackcli.token import CONFIG_ROOT; print(CONFIG_ROOT)"
+
+This directory can be modified by setting the ``SLACK_CLI_CONFIG_ROOT`` environment variable. For instance::
+
+    export SLACK_CLI_CONFIG_ROOT=~/slackcli
+
 Bells and Whistles ᕕ(⌐■_■)ᕗ ♪♬
 ------------------------------
 

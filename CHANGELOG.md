@@ -1,8 +1,9 @@
 # Changelog
 
-# Unreleased
+## v2.2.7 (2020-05-11)
 
 - Support `/status clear` and extended status updates.
+- Make it possible to run slack-cli without a writable configuration directory
 
 ## v2.2.6 (2020-01-22)
 

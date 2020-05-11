@@ -25,11 +25,9 @@ def resource_completer(**kwargs):
 def main():
     try:
         sys.exit(run())
-    except errors.SourceDoesNotExistError as e:
-        sys.stderr.write("Channel, group or user '{}' does not exist".format(e.args[0]))
-        sys.exit(1)
-    except errors.InvalidSlackToken as e:
-        sys.stderr.write("Invalid Slack token: '{}'".format(e.args[0]))
+    except errors.SlackCliError as e:
+        sys.stderr.write("❌ ")
+        sys.stderr.write(e.args[0])
         sys.exit(1)
 
 
