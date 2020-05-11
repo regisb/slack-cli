@@ -36,9 +36,10 @@ class ParseStatusTests(unittest.TestCase):
 
 
 class FormatMessageTests(unittest.TestCase):
-    @patch.object(utils.names, "user_id", return_value="U024BE7LH")
+    @patch.object(utils.names, "get_user_id", return_value="U024BE7LH")
     def test_format_outgoing_message(self, mock_user_id):
         self.assertEqual(
-            "Hey <@U024BE7LH>, did you see my file?",
+            "Hello <@U024BE7LH>, did you see my file?",
             utils.format_outgoing_message("Hello @loremipsum, did you see my file?"),
         )
+        mock_user_id.assert_called_with("loremipsum")

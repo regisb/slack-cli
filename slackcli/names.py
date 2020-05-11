@@ -4,7 +4,7 @@ from . import slack
 __all__ = ["username", "sourcename"]
 
 
-class Singleton(object):
+class Singleton:
 
     INSTANCE = None
 
@@ -32,7 +32,7 @@ class UserIndex(Singleton):
             )
         return self.user_id_index[user_id]
 
-    def user_id(self, username):
+    def user_id(self, slack_name):
         """
         Fetch the user ID from the user name. Note that this is really slow, as we need
         to parse the entire list of user IDs. Unfortunately it is not possible to fetch
@@ -42,7 +42,7 @@ class UserIndex(Singleton):
             members = slack.client().users.list().body["members"]
             for member in members:
                 self.user_name_index[member["name"]] = member["id"]
-        return self.user_name_index[username.lower()]
+        return self.user_name_index[slack_name.lower()]
 
     def botname(self, bot_id):
         if bot_id not in self.bot_index:
@@ -57,13 +57,6 @@ def username(user_id):
     Find the user name associated to a user ID.
     """
     return UserIndex.instance().username(user_id)
-
-
-def user_id(username):
-    """
-    Find the user id associated to a username
-    """
-    return UserIndex.instance().user_id(username)
 
 
 def botname(user_id):
@@ -85,10 +78,10 @@ def get_username(slack_id, default=None):
 
 def get_user_id(slack_name, default=None):
     """
-    Same as `user_id` but does not raise.
+    Find the user id associated to a username.
     """
     try:
-        return user_id(slack_name)
+        return UserIndex.instance().user_id(slack_name)
     except KeyError:
         return default
 

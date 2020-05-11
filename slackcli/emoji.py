@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import urllib.request
 
 
 USE_EMOJIS = "SLACK_CLI_NO_EMOJI" not in os.environ
@@ -33,8 +34,6 @@ class Emojis:
         I only use this when I need to update the emoji list in the slack-cli
         repository.
         """
-        import urllib.request
-
         emojis = json.loads(urllib.request.urlopen(cls.URL).read())
         emoji_names = {}
         for emoji in emojis:

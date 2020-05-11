@@ -122,7 +122,7 @@ def format_outgoing_message(message):
             return "<@{}>".format(user_id)
         return "@{}".format(username)
 
-    message, _ = re.subn(r"@(?P<username>[^ :]+)", replace_username, message)
+    message, _ = re.subn(r"@(?P<username>[^\s,:]+)", replace_username, message)
     return message
 
 
