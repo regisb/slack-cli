@@ -6,7 +6,7 @@ import slacker
 
 from . import errors
 from . import token
-from . import utils
+from . import messaging
 
 __all__ = ["client", "init"]
 

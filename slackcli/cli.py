@@ -11,7 +11,7 @@ from . import errors
 from . import slack
 from . import stream
 from . import token
-from . import utils
+from . import messaging
 
 
 def resource_completer(**kwargs):
@@ -19,7 +19,7 @@ def resource_completer(**kwargs):
     # "$(register-python-argcomplete slack-cli)"`. Note that this works in bash
     # only, not in zsh.
     slack.init()
-    return [r["name"] for _, r in utils.iter_resources()]
+    return [r["name"] for _, r in messaging.iter_resources()]
 
 
 def main():
@@ -162,32 +162,32 @@ def args_error_message(args):
 
 def last_messages(sources, count):
     for source in sources:
-        utils.print_messages(source, count=count)
+        messaging.print_messages(source, count=count)
 
 
 ######### Send
 
 
 def pipe(destination, pre=False, username=None):
-    destination_id = utils.get_destination_id(destination)
+    destination_id = messaging.get_destination_id(destination)
     for line in sys.stdin:
         line = line.strip()
         if line:
-            utils.post_message(destination_id, line, pre=pre, username=username)
+            messaging.post_message(destination_id, line, pre=pre, username=username)
 
 
 def run_command(destination, command, username=None):
-    destination_id = utils.get_destination_id(destination)
+    destination_id = messaging.get_destination_id(destination)
     command_result = subprocess.check_output(command, shell=True)
     message = "$ " + command + "\n" + command_result.decode("utf-8")
-    utils.post_message(destination_id, message, pre=True, username=username)
+    messaging.post_message(destination_id, message, pre=True, username=username)
 
 
 def send_message(destination, message, pre=False, username=None):
-    destination_id = utils.get_destination_id(destination)
-    utils.post_message(destination_id, message, pre=pre, username=username)
+    destination_id = messaging.get_destination_id(destination)
+    messaging.post_message(destination_id, message, pre=pre, username=username)
 
 
 def upload_file(destination, path):
-    destination_id = utils.get_destination_id(destination)
-    utils.upload_file(path, destination_id)
+    destination_id = messaging.get_destination_id(destination)
+    messaging.upload_file(path, destination_id)

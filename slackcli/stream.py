@@ -3,7 +3,7 @@ import websocket
 
 from . import names
 from . import slack
-from . import utils
+from . import messaging
 
 
 def receive(sources):
@@ -34,4 +34,4 @@ def loop(sources):
                 # The streaming API provides all messages in all channels, so
                 # we need to do some filtering here
                 continue
-            print(utils.format_incoming_message(source_name, data))
+            print(messaging.format_incoming_message(source_name, data))
