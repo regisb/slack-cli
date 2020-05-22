@@ -65,7 +65,7 @@ def save_token(user_token, team=None):
         message = e.args[0]
         if e.args[0] == "missing_scope":
             message = (
-                "Missing scope on token {}. This token requires the 'dnd:info' scope."
+                "Missing scope on token {}. This token requires the 'team:read' scope."
             ).format(user_token)
         raise errors.SlackCliError(message)
 
