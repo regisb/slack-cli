@@ -2,6 +2,8 @@
 slack-cli
 =========
 
+⚠️ THIS PROJECT IS IN MAINTENANCE MODE. I have lost interest in Slack -- actually, the less I use Slack the better I feel. Thus I do not have the time nor the energy to make slack-cli compatible with the new Slack authentication mechanism. I will happily review and merge pull requests, though 🙂 If a contributor would like to step forward and start fixing issues, I could then transfer ownership of the project (after they have demonstrated proficiency and integrity).
+
 Effectively interact with `Slack <https://slack.com/>`_ from the command line: send messages, upload files, send command output, pipe content... all from the confort of your terminal.
 
 Member of dozens of Slack teams? No worries, with ``slack-cli`` you can easily switch from one team to another.

@@ -14,7 +14,7 @@ def read(*paths):
 
 setup(
     name="slack-cli",
-    version="2.2.9",
+    version="2.2.10",
     description="Slack CLI for productive developers",
     long_description=(read("README.rst")),
     url="https://github.com/regisb/slack-cli",
